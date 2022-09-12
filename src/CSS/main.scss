@@ -1,0 +1,42 @@
+@import "./variables";
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.Full_Search {
+  @include flexCenter;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.compare-container {
+  @include flexCenter;
+  flex-direction: row;
+  height: 100vh;
+  width: 100%;
+  iframe {
+    border: 1px solid lightgrey;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.compare {
+  width: 100%;
+  height: 100vh;
+}
+
+.search_input_container {
+  @include flexCenter;
+  button {
+    margin: 1rem;
+    padding: 0.25rem;
+  }
+  input {
+    padding: 0.25rem;
+  }
+}

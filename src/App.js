@@ -1,24 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Full_Search from "./Components/Full_Search";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Account_Dash from "./Pages/Account_Dash";
+import Compare from "./Pages/Compare";
+import About from "./Pages/About";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div key={"4"} className="App">
+        <Routes>
+          <Route key={"1"} path="/Dashboard" element={<Account_Dash />} />
+          <Route key={"2"} path="/Compare" element={<Compare />} />
+          <Route key={"3"} path="/About" element={<About />} />
+          <Route key={"4"} path="/" element={<Full_Search />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

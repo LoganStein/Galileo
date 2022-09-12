@@ -1,0 +1,9 @@
+.value-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45%;
+  min-width: 15em;
+  height: 50vh;
+  border: 1px grey solid;
+}/*# sourceMappingURL=Value.css.map */

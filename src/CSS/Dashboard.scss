@@ -1,0 +1,55 @@
+@import "./variables";
+.dash-container {
+  height: 100vh;
+}
+
+.light {
+  color: $light;
+  font-size: small;
+}
+
+.val-chart {
+  @include flexCenter;
+  flex-wrap: wrap;
+  margin: auto;
+  justify-content: space-evenly;
+}
+
+.val {
+  @include flexCenter;
+}
+
+.account {
+  width: 93%;
+  margin: auto;
+  text-align: left;
+  overflow: hidden;
+}
+
+.assets-container {
+  @include flexCenter;
+  flex-direction: column;
+}
+
+.assets-header {
+  @include flexCenter;
+  justify-content: space-between;
+  width: 93%;
+}
+
+.Asset {
+  @include flexCenter;
+  width: 93%;
+  justify-content: space-between;
+  padding: 1rem 0.5rem;
+  margin: 0.5rem 0;
+  border: 1px solid grey;
+}
+
+.chart-placeholder {
+  @include flexCenter;
+  width: 45%;
+  min-width: 15em;
+  height: 50vh;
+  border: solid 1px grey;
+}

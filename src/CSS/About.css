@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  align-items: baseline;
+  flex-direction: column;
+  width: 50%;
+  margin: auto;
+  margin-top: 5em;
+}
+.container a {
+  color: rgb(59, 173, 89);
+}
+
+.section {
+  display: flex;
+  align-items: baseline;
+  flex-direction: column;
+  margin-top: 2.5em;
+}
+.section h3 {
+  margin-bottom: 0.5em;
+}
+.section p {
+  text-align: justify;
+}/*# sourceMappingURL=About.css.map */

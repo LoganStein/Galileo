@@ -1,0 +1,9 @@
+@import "./variables";
+
+.value-container {
+  @include flexCenter;
+  width: 45%;
+  min-width: 15em;
+  height: 50vh;
+  border: 1px grey solid;
+}

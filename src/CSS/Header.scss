@@ -1,0 +1,36 @@
+@import "./variables";
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+.header-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  margin-bottom: 5vh;
+  border-bottom: 1px solid grey;
+  input {
+    padding: 0.5rem;
+    width: 20rem;
+    border: 1px solid grey;
+    border-right: none;
+  }
+
+  .small_search {
+    form{
+      @include flexCenter;
+    }
+  }
+
+  .small-search-btn{
+    padding: .45rem;
+    background-color: white;
+    border: 1px solid grey;
+    border-left: none;
+    height: 100%;
+  }
+}

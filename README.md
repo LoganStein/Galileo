@@ -1,3 +1,5 @@
+start with `npm start` then in a new command prompt run `npm run electron-dev` to run it in electron
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
