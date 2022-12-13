@@ -15,7 +15,12 @@ async function GetAssetValue(assetCode, assetIssuer, amount) {
   let reserves;
   if (assetCode != "yBTC" && assetCode != "yETH" && assetCode != "USDC") {
     resp = await server.liquidityPools().forAssets([ASSET, USDC]).call();
-    reserves = resp.records[0].reserves; // getting empty response for pool with ybtc
+    try {
+      reserves = resp.records[0].reserves; // getting empty response for pool with ybtc
+    } catch (error) {
+      console.log(assetCode, "does not have a liquidity pool");
+      return 0;
+    }
   } else {
     if (assetCode == "yBTC") {
       // console.log("ybtc using id");

@@ -16,6 +16,7 @@ import Income from "../Components/Income";
 import Trades from "../Components/Trades";
 import ClipAddr from "../Helpers/ClipAddr";
 import GetOperations from "../Helpers/GetOperations";
+import LoadAccount from "../Helpers/LoadAccount";
 export const TotalContext = createContext();
 
 function Account_Dash() {
@@ -23,6 +24,7 @@ function Account_Dash() {
   const [addressState, setAddress] = useState(location.state.address);
   const [stellarResp, setResp] = useState({});
   const [ops, setOps] = useState([]);
+  const [comps, setComps] = useState([]);
 
   const initialState = 0;
   const reducer = (state, action) => {
@@ -40,61 +42,31 @@ function Account_Dash() {
   useEffect(() => {
     let accountID = "";
     dispatch({ type: "RESET", value: 0 });
-    // block from stellar api docs
-    var StellarSdk = require("stellar-sdk");
-    var server = new StellarSdk.Server("https://horizon.stellar.org");
-    // some quick address lookup's instead of using the full address
-    switch (addressState.toLowerCase()) {
+    switch (addressState) {
       case "me":
         accountID = "GDDQHQEY65CGGDLR7Z5C437QNGNBYMXZL6RFAZ6FBGKY5V66D5YE2S7V";
         setAddress(accountID);
         break;
-      case "mel":
-        accountID = "GDRG7OKIRUGGVSYCRX65VFUCBNOF7PYVCII7UIDUS65Q7TOHFOEWQC2F";
-        setAddress(accountID);
-        break;
-      case "dad":
-        accountID = "GBT5N42UF5RU3C5G5GB5CD7JKMV77TGWUZN63UDZC6HMYZCR6D7YQK46";
-        setAddress(accountID);
-        break;
-      case "whale":
-        accountID = "GCB426VZ6DYX576HLZTA2X2C3CJT6ZDFNHCIIULPZYUNWC55QRFOFEI4";
-        setAddress(accountID);
-        break;
-      case "earner":
-        accountID = "GAC6AA2ADPOTPY2LUI7S27XKQZERQ2M5426N4OV6BIEN7TM64ABOSITA";
-        setAddress(accountID);
-        break;
-      case "earner2":
-        accountID = "GA2UEFPPYCANJSEI4X2BAUEJWF7DHXQWEDCAMEJGZ6ZNKTW2YSZXXQMK";
-        setAddress(accountID);
-        break;
-      case "sdf enterprise":
-        accountID = "GDUY7J7A33TQWOSOQGDO776GGLM3UQERL4J3SPT56F6YS4ID7MLDERI4";
-        setAddress(accountID);
-        break;
-      case "sdf marketing":
-        accountID = "GBI5PADO5TEDY3R6WFAO2HEKBTTZS4LGR77XM4AHGN52H45ENBWGDFOH";
-        setAddress(accountID);
-        break;
       default:
-        accountID = addressState;
         break;
     }
+    // block from stellar api docs
+    let StellarSdk = require("stellar-sdk");
+    let server = new StellarSdk.Server("https://horizon.stellar.org");
     server
-      .loadAccount(accountID)
-      .then(function (resp) {
+      .loadAccount(addressState)
+      .then((resp) => {
         setResp(resp);
-        console.log("RESPONCE", resp)
       })
-      .catch(function (err) {
-        alert("wallet does not exist")
+      .catch((err) => {
+        console.log(err);
+        alert(`${addressState} does not exist`);
       });
+    // end stellar api docs block
     (async () => {
       let opsTemp = await GetOperations(addressState);
       setOps(opsTemp);
     })();
-    // end stellar api docs block
     // use addressState to query the stellar API? to get account data
   }, [addressState]);
 
@@ -105,8 +77,18 @@ function Account_Dash() {
       <div className="dash-container">
         <Header key={"1"} setAddress={setAddress} />
         <div className="account">
-          <h2><a title="View on Stellar Expert" href={"https://stellar.expert/explorer/public/account/" + addressState}>{addressState || "GEXAMPLE..."}</a></h2>
+          <h2>
+            <a
+              title="View on Stellar Expert"
+              href={
+                "https://stellar.expert/explorer/public/account/" + addressState
+              }
+            >
+              {addressState || "GEXAMPLE..."}
+            </a>
+          </h2>
         </div>
+
         <div className="val-chart">
           <Value key={"2"} dollarValue={0} balances={stellarResp.balances} />
           <Chart key={"3"} />
