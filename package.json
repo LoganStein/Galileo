@@ -27,6 +27,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "prestart": "cp ./webpack.config.js ./node_modules/react-scripts/config/webpack.config.js && cp ./account.js ./node_modules/stellar-base/lib/account.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
