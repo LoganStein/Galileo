@@ -3,8 +3,8 @@ import Asset from "./Asset";
 
 function Asset_Values(props) {
   let assets = [];
-  console.log("dude", assets)
-  
+  // console.log("dude", assets)
+
   // useEffect(() => {
   if (Object.keys(props.acct_data).length != 0) {
     props.acct_data.balances.sort((a, b) => b.balance - a.balance);

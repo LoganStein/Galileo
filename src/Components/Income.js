@@ -9,9 +9,9 @@ function Income(props) {
   const [month, setMonth] = useState(0);
   const totalContext = useContext(TotalContext);
   useEffect(() => {
-    console.log("income", totalContext.income);
+    // console.log("income", totalContext.income);
     let incomes = GetIncome(props.ops, props.acctID);
-    console.log("income:", incomes);
+    // console.log("income:", incomes);
     (async () => {
       let hrly = 0;
       let daily = 0;

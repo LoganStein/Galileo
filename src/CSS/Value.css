@@ -6,4 +6,10 @@
   min-width: 15em;
   height: 50vh;
   border: 1px grey solid;
+  position: relative;
+}
+.value-container h1 {
+  position: absolute;
+  width: 30%;
+  transform: translateY(-50%);
 }/*# sourceMappingURL=Value.css.map */

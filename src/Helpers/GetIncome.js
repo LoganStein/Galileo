@@ -41,7 +41,7 @@ function GetIncome(ops, acctID) {
     }
   });
   uniqueOps.shift();
-  console.log("unique", uniqueOps);
+  // console.log("unique", uniqueOps);
 
   //count up each one
   let countArr = [];
@@ -54,7 +54,7 @@ function GetIncome(ops, acctID) {
     }
     countArr.push(count);
   });
-  console.log("uni", countArr);
+  // console.log("uni", countArr);
   let hourly = [];
   let daily = [];
   for (let i = 0; i < countArr.length; i++) {
@@ -64,8 +64,8 @@ function GetIncome(ops, acctID) {
       daily.push(uniqueOps[i]);
     }
   }
-  console.log("uni hourly", hourly);
-  console.log("uni daily", daily);
+  // console.log("uni hourly", hourly);
+  // console.log("uni daily", daily);
   return { hr: hourly, day: daily };
 }
 export default GetIncome;

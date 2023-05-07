@@ -4,7 +4,7 @@ async function LoadAccount(acctID) {
   let resp = await server.loadAccount(acctID).catch(function (err) {
     console.error(err);
   });
-  console.log("API CALL");
+  // console.log("API CALL");
   return resp;
 }
 export default LoadAccount;

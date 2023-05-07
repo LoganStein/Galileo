@@ -50,7 +50,7 @@ async function GetAssetValue(assetCode, assetIssuer, amount) {
     // console.log("val", val, ASSET);
     total = val;
   }
-  console.log("API CALL");
+  // console.log("API CALL");
   // console.count();
   return total;
 }

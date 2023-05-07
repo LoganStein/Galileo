@@ -25,7 +25,7 @@ async function GetPoolValue(id, ownedShares) {
   const assetValue = await GetAssetValue(assetCode, assetIssuer, 1);
   const totalPoolValue = resp.reserves[0].amount * assetValue * 2;
   const retVal = totalPoolValue * (ownedShares / resp.total_shares);
-  console.log("API CALL");
+  // console.log("API CALL");
   // console.count();
   return retVal;
 }
