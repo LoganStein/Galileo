@@ -20,10 +20,12 @@ function Asset(props) {
           (val) => {
             setValue(val.toFixed(2));
             //set elevated state (total) with total + val
+
             totalContext.totalDispatch({
-              type: "ADD_VAL_TO_TOTAL",
-              value: val,
+              type: "ADD_ASSET",
+              value: { code: props.assetCode, val: val },
             });
+
             // console.log(props.assetCode, val);
           }
         );
@@ -31,17 +33,25 @@ function Asset(props) {
         // instead value is just the amount (1:1 with dollar)
         setValue(Number(props.amount).toFixed(2));
         let val = Number(props.amount);
+
         totalContext.totalDispatch({
-          type: "ADD_VAL_TO_TOTAL",
-          value: val,
+          type: "ADD_ASSET",
+          value: { code: props.assetCode, val: val },
         });
       }
     } else if (props.pool == true) {
+      let poolCode = "";
+      GetPoolAssets(props.poolID).then((val) => {
+        poolCode = val;
+      });
       // asset is LP shares
       GetPoolValue(props.poolID, props.amount).then((val) => {
         setValue(val.toFixed(2));
         //set elevated state (total) with total + val
-        totalContext.totalDispatch({ type: "ADD_VAL_TO_TOTAL", value: val });
+        totalContext.totalDispatch({
+          type: "ADD_ASSET",
+          value: { code: poolCode, val: val },
+        });
       });
       GetPoolAssets(props.poolID).then((assets) => {
         setAssetCode(assets);

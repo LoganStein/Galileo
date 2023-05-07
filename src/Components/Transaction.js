@@ -149,7 +149,7 @@ function Transaction(props) {
     } else if (props.type == "manage_sell_offer") {
       setMsg("selling");
     } else {
-      console.log("unhandled: ", props.type);
+      // console.log("unhandled: ", props.type);
     }
   }, []);
   return (

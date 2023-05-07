@@ -7,7 +7,7 @@ async function GetOperations(acctID, hash) {
     .limit(50)
     .order("desc")
     .call();
-  console.log("API CALL");
+  // console.log("API CALL");
   // console.log(ops);
   return ops.records;
 }

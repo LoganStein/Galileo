@@ -4,7 +4,7 @@ import "../CSS/Dashboard.css";
 import Value from "../Components/Value";
 import Chart from "../Components/Chart";
 import Asset_Values from "../Components/Asset_Values";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   useState,
   useEffect,
@@ -23,14 +23,25 @@ function Account_Dash() {
   const [addressState, setAddress] = useState(location.state.address);
   const [stellarResp, setResp] = useState({});
   const [ops, setOps] = useState([]);
+  const navigate = useNavigate();
 
-  const initialState = 0;
+  const initialState = { total: 0, assets: [] };
   const reducer = (state, action) => {
     switch (action.type) {
-      case "ADD_VAL_TO_TOTAL":
-        return state + action.value;
+      case "ADD_ASSET":
+        const assetExists = state.assets.some(
+          (asset) => asset.code === action.value.code
+        );
+        if (!assetExists) {
+          return {
+            total: state.total + action.value.val,
+            assets: [...state.assets, action.value],
+          };
+        } else {
+          return state;
+        }
       case "RESET":
-        return 0;
+        return { total: 0, assets: [] };
       default:
         return state;
     }
@@ -81,15 +92,33 @@ function Account_Dash() {
         accountID = addressState;
         break;
     }
-    server
-      .loadAccount(accountID)
-      .then(function (resp) {
-        setResp(resp);
-        console.log("RESPONCE", resp)
-      })
-      .catch(function (err) {
-        alert("wallet does not exist")
-      });
+    // weirdly doesnt always work???
+    // (async () => {
+    //   await server
+    //     .loadAccount(accountID)
+    //     .then(function (resp) {
+    //       setResp(resp);
+    //       console.log("RESPONSE", resp);
+    //     })
+    //     .catch(function (err) {
+    //       // alert("wallet does not exist");
+    //       console.log(accountID, err);
+    //     });
+    // })();
+
+    // same as above but only using fetch
+    (async () => {
+      const resp = await fetch(
+        "https://horizon.stellar.org/accounts/" + accountID
+      );
+      const data = await resp.json();
+      console.log(data);
+      if (data.status === 400) {
+        alert("The wallet does not exist");
+        navigate("/");
+      }
+      setResp(data);
+    })();
     (async () => {
       let opsTemp = await GetOperations(addressState);
       setOps(opsTemp);
@@ -105,7 +134,16 @@ function Account_Dash() {
       <div className="dash-container">
         <Header key={"1"} setAddress={setAddress} />
         <div className="account">
-          <h2><a title="View on Stellar Expert" href={"https://stellar.expert/explorer/public/account/" + addressState}>{addressState || "GEXAMPLE..."}</a></h2>
+          <h2>
+            <a
+              title="View on Stellar Expert"
+              href={
+                "https://stellar.expert/explorer/public/account/" + addressState
+              }
+            >
+              {addressState || "GEXAMPLE..."}
+            </a>
+          </h2>
         </div>
         <div className="val-chart">
           <Value key={"2"} dollarValue={0} balances={stellarResp.balances} />

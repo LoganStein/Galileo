@@ -4,7 +4,7 @@ async function GetMemo(hash) {
   // console.log(hash);
   const trans = await server.transactions().transaction(hash).call();
   // console.log(trans);
-  console.log("API CALL");
+  // console.log("API CALL");
   // console.count();
   // console.log(trans.memo);
   return trans.memo;
