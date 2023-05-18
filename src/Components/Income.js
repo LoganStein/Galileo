@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import GetAssetValue from "../Helpers/GetAssetValue";
 import GetIncome from "../Helpers/GetIncome";
-import { TotalContext } from "../Pages/Account_Dash";
+import { TotalContext } from "../Components/TotalContext";
 
 function Income(props) {
   const [hr, setHr] = useState(0);

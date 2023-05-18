@@ -5,18 +5,18 @@ import Value from "../Components/Value";
 import Chart from "../Components/Chart";
 import Asset_Values from "../Components/Asset_Values";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  useState,
-  useEffect,
-  useContext,
-  createContext,
-  useReducer,
-} from "react";
+import { useState, useEffect, useReducer, useContext } from "react";
 import Income from "../Components/Income";
 import Trades from "../Components/Trades";
-import ClipAddr from "../Helpers/ClipAddr";
 import GetOperations from "../Helpers/GetOperations";
-export const TotalContext = createContext();
+import {
+  TotalContext,
+  initialState,
+  reducer,
+} from "../Components/TotalContext";
+import GetPoolAssets from "../Helpers/GetPoolAssets";
+import GetPoolValue from "../Helpers/GetPoolValue";
+import GetAssetValue from "../Helpers/GetAssetValue";
 
 function Account_Dash() {
   const location = useLocation();
@@ -24,30 +24,10 @@ function Account_Dash() {
   const [stellarResp, setResp] = useState({});
   const [ops, setOps] = useState([]);
   const navigate = useNavigate();
-
-  const initialState = { total: 0, assets: [] };
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case "ADD_ASSET":
-        const assetExists = state.assets.some(
-          (asset) => asset.code === action.value.code
-        );
-        if (!assetExists) {
-          return {
-            total: state.total + action.value.val,
-            assets: [...state.assets, action.value],
-          };
-        } else {
-          return state;
-        }
-      case "RESET":
-        return { total: 0, assets: [] };
-      default:
-        return state;
-    }
-  };
+  const totalContext = useContext(TotalContext);
 
   const [total, dispatch] = useReducer(reducer, initialState);
+
   useEffect(() => {
     let accountID = "";
     dispatch({ type: "RESET", value: 0 });
@@ -112,12 +92,51 @@ function Account_Dash() {
         "https://horizon.stellar.org/accounts/" + accountID
       );
       const data = await resp.json();
-      console.log(data);
+      // console.log(data);
       if (data.status === 400) {
         alert("The wallet does not exist");
         navigate("/");
       }
       setResp(data);
+      // start context refactor for assets
+      data.balances.forEach((bal) => {
+        if (bal.balance > 0.0000001) {
+          // only add non zero balances
+          // value for liquidity pools
+          if (bal.liquidity_pool_id != undefined) {
+            let poolCode = "";
+            GetPoolAssets(bal.liquidity_pool_id).then((val) => {
+              poolCode = val;
+            });
+            GetPoolValue(bal.liquidity_pool_id, bal.balance).then((val) => {
+              //set elevated state (total) with total + val
+              dispatch({
+                type: "ADD_ASSET",
+                value: { code: poolCode, val: val, bal: Number(bal.balance) },
+              });
+            });
+          }
+          if (bal.asset_code !== "USDC") {
+            let assetCode = bal.asset_code;
+            if (bal.asset_type === "native") {
+              assetCode = "XLM";
+            }
+            GetAssetValue(assetCode, bal.asset_issuer, bal.balance).then(
+              (val) => {
+                dispatch({
+                  type: "ADD_ASSET",
+                  value: {
+                    code: assetCode,
+                    val: val,
+                    bal: Number(bal.balance),
+                  },
+                });
+              }
+            );
+          }
+        }
+      });
+      // end context refactor for assets
     })();
     (async () => {
       let opsTemp = await GetOperations(addressState);

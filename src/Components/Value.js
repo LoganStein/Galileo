@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
 import "../CSS/Value.css";
-import { TotalContext } from "../Pages/Account_Dash";
+import { TotalContext } from "../Components/TotalContext";
 import CircleChart from "./CircleChart";
 
 function Value() {
   const data = [
+    // fake data in case real data doesn't come through
     {
       id: "make",
       label: "make",
