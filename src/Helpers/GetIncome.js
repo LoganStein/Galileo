@@ -24,7 +24,7 @@ function GetIncome(ops, acctID) {
       issuer: assetIss,
     };
 
-    let shit = uniqueOps.find((e) => {
+    let existingOp = uniqueOps.find((e) => {
       if (e.asset == asset && e.sender == sender) {
         return true;
       }
@@ -36,12 +36,11 @@ function GetIncome(ops, acctID) {
       */
       return false;
     });
-    if (shit == undefined) {
+    if (existingOp == undefined) {
       uniqueOps.push(parsed);
     }
   });
   uniqueOps.shift();
-  // console.log("unique", uniqueOps);
 
   //count up each one
   let countArr = [];

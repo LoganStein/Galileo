@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import { React, useContext } from "react";
 import Asset from "./Asset";
 import { TotalContext } from "../Components/TotalContext";
 

@@ -1,17 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import GetAssetValue from "../Helpers/GetAssetValue";
 import GetIncome from "../Helpers/GetIncome";
-import { TotalContext } from "../Components/TotalContext";
 
 function Income(props) {
   const [hr, setHr] = useState(0);
   const [day, setDay] = useState(0);
   const [month, setMonth] = useState(0);
-  const totalContext = useContext(TotalContext);
   useEffect(() => {
-    // console.log("income", totalContext.income);
     let incomes = GetIncome(props.ops, props.acctID);
-    // console.log("income:", incomes);
     (async () => {
       let hrly = 0;
       let daily = 0;

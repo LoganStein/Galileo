@@ -5,7 +5,7 @@ import Value from "../Components/Value";
 import Chart from "../Components/Chart";
 import Asset_Values from "../Components/Asset_Values";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect, useReducer, useContext } from "react";
+import { useState, useEffect, useReducer } from "react";
 import Income from "../Components/Income";
 import Trades from "../Components/Trades";
 import GetOperations from "../Helpers/GetOperations";
@@ -14,9 +14,8 @@ import {
   initialState,
   reducer,
 } from "../Components/TotalContext";
-import GetPoolAssets from "../Helpers/GetPoolAssets";
-import GetPoolValue from "../Helpers/GetPoolValue";
-import GetAssetValue from "../Helpers/GetAssetValue";
+import { FetchAccount } from "../Helpers/LoadAccount";
+import { LoadContext } from "../Helpers/LoadContext";
 
 function Account_Dash() {
   const location = useLocation();
@@ -24,16 +23,16 @@ function Account_Dash() {
   const [stellarResp, setResp] = useState({});
   const [ops, setOps] = useState([]);
   const navigate = useNavigate();
-  const totalContext = useContext(TotalContext);
 
   const [total, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
+    // set values to empty before getting real data
     let accountID = "";
     dispatch({ type: "RESET", value: 0 });
-    // block from stellar api docs
-    var StellarSdk = require("stellar-sdk");
-    var server = new StellarSdk.Server("https://horizon.stellar.org");
+    // var StellarSdk = require("stellar-sdk");
+    // var server = new StellarSdk.Server("https://horizon.stellar.org");
+
     // some quick address lookup's instead of using the full address
     switch (addressState.toLowerCase()) {
       case "me":
@@ -72,78 +71,23 @@ function Account_Dash() {
         accountID = addressState;
         break;
     }
-    // weirdly doesnt always work???
-    // (async () => {
-    //   await server
-    //     .loadAccount(accountID)
-    //     .then(function (resp) {
-    //       setResp(resp);
-    //       console.log("RESPONSE", resp);
-    //     })
-    //     .catch(function (err) {
-    //       // alert("wallet does not exist");
-    //       console.log(accountID, err);
-    //     });
-    // })();
-
-    // same as above but only using fetch
+    // loads the account and data we need
     (async () => {
-      const resp = await fetch(
-        "https://horizon.stellar.org/accounts/" + accountID
-      );
-      const data = await resp.json();
-      // console.log(data);
+      // wait for helper function to get account data
+      let data = await FetchAccount(accountID);
+      // if the response status is 400 (bad request) go back to search page
       if (data.status === 400) {
         alert("The wallet does not exist");
         navigate("/");
       }
+      // set state with account data from helper function
       setResp(data);
-      // start context refactor for assets
-      data.balances.forEach((bal) => {
-        if (bal.balance > 0.0000001) {
-          // only add non zero balances
-          // value for liquidity pools
-          if (bal.liquidity_pool_id != undefined) {
-            let poolCode = "";
-            GetPoolAssets(bal.liquidity_pool_id).then((val) => {
-              poolCode = val;
-            });
-            GetPoolValue(bal.liquidity_pool_id, bal.balance).then((val) => {
-              //set elevated state (total) with total + val
-              dispatch({
-                type: "ADD_ASSET",
-                value: { code: poolCode, val: val, bal: Number(bal.balance) },
-              });
-            });
-          }
-          if (bal.asset_code !== "USDC") {
-            let assetCode = bal.asset_code;
-            if (bal.asset_type === "native") {
-              assetCode = "XLM";
-            }
-            GetAssetValue(assetCode, bal.asset_issuer, bal.balance).then(
-              (val) => {
-                dispatch({
-                  type: "ADD_ASSET",
-                  value: {
-                    code: assetCode,
-                    val: val,
-                    bal: Number(bal.balance),
-                  },
-                });
-              }
-            );
-          }
-        }
-      });
-      // end context refactor for assets
-    })();
-    (async () => {
+      // use helper function to set context of balances and values
+      LoadContext(data, dispatch);
+      // set operations with helper function
       let opsTemp = await GetOperations(addressState);
       setOps(opsTemp);
     })();
-    // end stellar api docs block
-    // use addressState to query the stellar API? to get account data
   }, [addressState]);
 
   return (

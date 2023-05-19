@@ -1,13 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-import { TotalContext } from "../Components/TotalContext";
-
-// check for usdc and use the amount as the value because there is no usdc:usdc LP to calculate value from
+import React from "react";
 
 function Asset(props) {
-  const totalContext = useContext(TotalContext);
-  const [value, setValue] = useState(0);
-  const [assetCode, setAssetCode] = useState("...");
-
   return (
     <div className="Asset">
       <h4>{props.assetCode || "..."}</h4>
