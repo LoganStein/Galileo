@@ -1,10 +1,10 @@
-async function GetOperations(acctID, hash) {
+async function GetOperations(acctID, limit = 75) {
   const StellarSdk = require("stellar-sdk");
   const server = new StellarSdk.Server("https://horizon.stellar.org");
   let ops = await server
     .operations()
     .forAccount(acctID)
-    .limit(50)
+    .limit(limit)
     .order("desc")
     .call();
   // console.log("API CALL");

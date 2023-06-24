@@ -1,70 +1,69 @@
-// this method of calculating income is EXTREMELY UNRELIABLE
-// it only works for my account semi-reliably
-// it doesnt use any data analytics and is customized to my account's
-// type of activity
+import GetAssetValue from "./GetAssetValue";
 
-function GetIncome(ops, acctID) {
-  //   console.log("in income", ops);
+/*
+
+  There are a lot of issues with this function. It fails completely if an account is too complex.
+  If the account is too active it won't show accurate information because there are no ops from
+  yesterday passed in. They are buried by today's ops. 
+
+  this also does not exclude one time transactions. If an account is credited $1,000 in a one time transaction
+  it will appear as if their income for the hr day and month is 41.66 1k and 30k respectively.
+
+  This can be fixed by only allowing for certain transactions to be counted as income
+  for example looking for "SDEX MM" or "AMM LP" or "Bribe" in the memo as these transactions are recurring
+  credits.
+*/
+
+async function GetIncome(ops, acctID) {
   let recieved = [];
-  let uniqueOps = [{ amount: 10, asset: "test", sender: "me" }];
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10); // Get yesterday's date in ISO format (YYYY-MM-DD)
   ops.forEach((op) => {
     if (op.type == "payment" && op.from != acctID) {
-      recieved.push(op);
+      const date = new Date(op.created_at).toISOString().slice(0, 10); // Get transaction date in ISO format (YYYY-MM-DD)
+      if (date === yesterday) {
+        recieved.push(op);
+      }
     }
   });
-  recieved.forEach((op) => {
-    let amount = op.amount;
-    let asset = op.asset_code;
-    let assetIss = op.asset_issuer;
-    let sender = op.from;
-    let parsed = {
-      amount: amount,
-      asset: asset,
-      sender: sender,
-      issuer: assetIss,
-    };
 
-    let existingOp = uniqueOps.find((e) => {
-      if (e.asset == asset && e.sender == sender) {
-        return true;
-      }
-      /*
-      if (Number(e.amount).toFixed(3) == Number(amount).toFixed(3)) {
-        console.log("uni found");
-        return true;
-      }
-      */
-      return false;
-    });
-    if (existingOp == undefined) {
-      uniqueOps.push(parsed);
-    }
-  });
-  uniqueOps.shift();
-
-  //count up each one
-  let countArr = [];
-  uniqueOps.forEach((e) => {
-    let count = 0;
-    for (let i = 0; i < recieved.length; i++) {
-      if (recieved[i].from == e.sender && recieved[i].asset_code == e.asset) {
-        count++;
-      }
-    }
-    countArr.push(count);
-  });
-  // console.log("uni", countArr);
-  let hourly = [];
-  let daily = [];
-  for (let i = 0; i < countArr.length; i++) {
-    if (countArr[i] > 10) {
-      hourly.push(uniqueOps[i]);
-    } else if (countArr[i] <= 2) {
-      daily.push(uniqueOps[i]);
-    }
+  /// Group transactions by hour
+  const incomeByHour = [];
+  for (let i = 0; i < 24; i++) {
+    incomeByHour.push([]);
   }
-  // console.log("uni hourly", hourly);
-  // console.log("uni daily", daily);
-  return { hr: hourly, day: daily };
+  recieved.forEach((op) => {
+    const {
+      amount,
+      asset_code: asset,
+      asset_issuer: issuer,
+      from: sender,
+      created_at: date,
+    } = op;
+    let parsed = { amount, asset, issuer, sender, date };
+    if (op.asset_type === "native") {
+      parsed = { amount, asset: "XLM", issuer, sender, date };
+    }
+    const hour = new Date(date).getHours();
+    incomeByHour[hour].push(parsed);
+  });
+
+  console.log("income by hour", incomeByHour);
+
+  let dailyTotal = 0;
+
+  // use Promise.all to wait for all promises to resolve before continuing with calculation
+  const promises = incomeByHour.flatMap((hourlyBatch) => {
+    return hourlyBatch.map((payment) => {
+      return GetAssetValue(payment.asset, payment.issuer, payment.amount);
+    });
+  });
+  const values = await Promise.all(promises);
+  dailyTotal = values.reduce((acc, val) => acc + val, 0);
+
+  console.log("my final avg", dailyTotal / 24);
+
+  let hourly = dailyTotal / 24;
+  return { hr: hourly, day: dailyTotal };
 }
+
 export default GetIncome;

@@ -147,7 +147,27 @@ function Transaction(props) {
         setVal(amount.toFixed(4));
       }
     } else if (props.type == "manage_sell_offer") {
-      setMsg("selling");
+      setMsg(
+        "Selling " +
+          props.asset +
+          " for " +
+          props.buying_asset +
+          " at " +
+          props.price +
+          " " +
+          props.buying_asset +
+          "/" +
+          props.selling_asset
+      );
+      setIcon(<BsArrowLeftRight size={"1.5rem"} />);
+      let amount = props.amount * props.price;
+      if (props.selling_asset != "USDC") {
+        GetAssetValue(props.selling_asset, props.issuer, amount).then((v) => {
+          setVal(v.toFixed(4));
+        });
+      } else {
+        setVal(amount.toFixed(4));
+      }
     } else {
       // console.log("unhandled: ", props.type);
     }
