@@ -63,4 +63,13 @@
   min-width: 15em;
   height: 50vh;
   border: solid 1px grey;
+}
+
+.filter-icon {
+  cursor: pointer;
+  margin-left: 90%;
+}
+
+.filter-container {
+  margin-left: 80%;
 }/*# sourceMappingURL=Dashboard.css.map */

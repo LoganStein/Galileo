@@ -3,6 +3,7 @@ import "../CSS/Trade.css";
 import Transaction from "./Transaction";
 import GetOperations from "../Helpers/GetOperations";
 import Filter from "./Filter";
+import { FiFilter } from "react-icons/fi";
 
 function Trades(props) {
   const [transactions, setTransactions] = useState([]);
@@ -160,8 +161,9 @@ function Trades(props) {
           let toggleFilter = showFilter;
           setShowFilter(!toggleFilter);
         }}
+        className="filter-icon"
       >
-        F
+        <FiFilter />
       </span>
       {showFilter ? <Filter /> : <></>}
       {transactions}

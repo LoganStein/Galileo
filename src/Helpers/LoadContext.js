@@ -1,7 +1,7 @@
 import GetAssetValue from "./GetAssetValue";
 import GetPoolAssets from "./GetPoolAssets";
 import GetPoolValue from "./GetPoolValue";
-
+// LoadContext takes in the data from the stellar api call and dispatches the ADD_ASSET action to the reducer to provide access to the account's asset data
 export function LoadContext(data, dispatch) {
   data.balances.forEach((bal) => {
     if (bal.balance > 0.0000001) {
@@ -32,6 +32,7 @@ export function LoadContext(data, dispatch) {
           type: "ADD_ASSET",
           value: {
             code: assetCode,
+            issuer: bal.asset_issuer,
             val: val,
             bal: Number(bal.balance),
           },

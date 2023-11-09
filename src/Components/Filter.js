@@ -2,7 +2,7 @@ import React from "react";
 
 function Filter() {
   return (
-    <div>
+    <div className="filter-container">
       <div>
         <label>Token</label>
         <select>

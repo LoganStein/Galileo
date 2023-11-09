@@ -82,6 +82,8 @@ function Account_Dash() {
       }
       // set state with account data from helper function
       setResp(data);
+      // set the account ID in the context
+      dispatch({ type: "SET_ACCT", value: accountID });
       // use helper function to set context of balances and values
       LoadContext(data, dispatch);
       // set operations with helper function
