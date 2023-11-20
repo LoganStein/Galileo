@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { GetHistoricValue } from "../Helpers/GetHistoricValue";
+// import { GetHistoricValue } from "../Helpers/GetHistoricValue";
+import { GetHistoricValue } from "../Helpers/GetHistoricValueNew";
 import * as d3 from "d3";
 import { TotalContext } from "./TotalContext";
 import GetEffects from "../Helpers/GetEffects";
@@ -15,11 +16,7 @@ function Chart({ margin = { top: 30, bottom: 30, left: 40, right: 30 } }) {
     async function getEffects() {
       let effects = await GetEffects(totalContext.totalState.acctID, 200);
       console.log("effects", effects);
-      let historicValue = await GetHistoricValue(
-        totalContext,
-        effects._embedded.records,
-        15
-      );
+      let historicValue = await GetHistoricValue(totalContext, 15);
       let values = [];
       historicValue.forEach((day) => {
         values.push(day.val.toFixed(2));
