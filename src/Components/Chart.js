@@ -4,28 +4,31 @@ import { GetHistoricValue } from "../Helpers/GetHistoricValueNew";
 import * as d3 from "d3";
 import { TotalContext } from "./TotalContext";
 import GetEffects from "../Helpers/GetEffects";
-import { get } from "https-browserify";
 
-function Chart({ margin = { top: 30, bottom: 30, left: 40, right: 30 } }) {
+const tooltipStyle = {
+  position: "absolute",
+  visibility: "hidden",
+  backgroundColor: "white",
+  border: "solid",
+  borderRadius: "5px",
+  padding: "5px",
+};
+
+function Chart({ margin = { top: 30, bottom: 30, left: 60, right: 30 } }) {
   const [data, setData] = useState([]);
-
+  const tooltipRef = useRef(null);
   const totalContext = useContext(TotalContext);
   useEffect(() => {
-    console.log("hello");
-
-    async function getEffects() {
-      let effects = await GetEffects(totalContext.totalState.acctID, 200);
-      console.log("effects", effects);
-      let historicValue = await GetHistoricValue(totalContext, 15);
-      let values = [];
-      historicValue.forEach((day) => {
-        values.push(day.val.toFixed(2));
+    async function getValueHistory() {
+      GetHistoricValue(totalContext, 5).then((histVal) => {
+        console.log("wtf", histVal);
+        setData(histVal);
       });
-      console.log("something values", values);
-      setData(values.reverse());
     }
-    getEffects();
-  }, [totalContext]);
+    totalContext.totalState.acctID != "N/A"
+      ? getValueHistory()
+      : console.log("no acctID");
+  }, [totalContext.totalState.assets]);
 
   const parentRef = useRef(null);
 
@@ -33,31 +36,54 @@ function Chart({ margin = { top: 30, bottom: 30, left: 40, right: 30 } }) {
   const height = parentRef.current ? parentRef.current.offsetHeight : 0;
 
   const x = d3
-    .scaleLinear()
-    .domain([0, data.length - 1])
+    .scaleTime()
+    .domain(d3.extent(data, (d) => d.date))
     .range([margin.left, width - margin.right]);
 
   const y = d3
     .scaleLinear()
-    .domain(d3.extent(data))
+    .domain([
+      d3.min(data, (d) => d.value) - d3.min(data, (d) => d.value) * 0.01,
+      d3.max(data, (d) => d.value) + d3.max(data, (d) => d.value) * 0.01,
+    ])
     .range([height - margin.top, margin.bottom]);
 
   const line = d3
     .line()
-    .x((d, i) => x(i))
-    .y((d) => y(d));
+    .x((d, i) => x(d.date))
+    .y((d) => y(d.value));
 
-  const xAxis = d3.axisBottom(x);
+  const xAxis = d3.axisBottom(x).ticks(data.length);
 
-  const yAxis = d3.axisLeft(y);
+  const yAxis = d3
+    .axisLeft(y)
+    .tickSize(5)
+    .tickPadding(10)
+    .tickFormat((d) => `$${d}`);
 
   return (
     <div className="chart-placeholder" ref={parentRef}>
       <svg width="100%" height={height}>
         <path fill="none" stroke="currentColor" d={line(data)} />
-        <g fill="white" stroke="currentColor" stroke-width="1.5">
+        <g fill="white" stroke="currentColor" strokeWidth="1.5">
           {data.map((d, i) => (
-            <circle key={i} cx={x(i)} cy={y(d)} r={2.5} />
+            <circle
+              key={i}
+              cx={x(d.date)}
+              cy={y(d.value)}
+              r={2.5}
+              onMouseOver={() => {
+                tooltipRef.current.style.visibility = "visible";
+              }}
+              onMouseMove={(e) => {
+                tooltipRef.current.style.top = e.pageY + "px";
+                tooltipRef.current.style.left = e.pageX + "px";
+                tooltipRef.current.textContent = d.value.toFixed(2);
+              }}
+              onMouseOut={() => {
+                tooltipRef.current.style.visibility = "hidden";
+              }}
+            />
           ))}
         </g>
         <g transform={`translate(0, ${height - margin.bottom})`}>
@@ -67,6 +93,7 @@ function Chart({ margin = { top: 30, bottom: 30, left: 40, right: 30 } }) {
           <g className="axis" ref={(node) => d3.select(node).call(yAxis)} />
         </g>
       </svg>
+      <div ref={tooltipRef} style={tooltipStyle}></div>
     </div>
   );
 }

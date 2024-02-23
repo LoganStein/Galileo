@@ -24,6 +24,7 @@ export const reducer = (state, action) => {
       );
       if (!assetExists) {
         // adds the asset to the asset list and adds the value to the total value
+        console.log("adding asset", action.value);
         return {
           acctID: state.acctID,
           total: state.total + action.value.val,
@@ -35,7 +36,10 @@ export const reducer = (state, action) => {
       }
     // add a historic value to the context
     case "ADD_HISTORIC_VALUE":
-      return state;
+      return {
+        ...state,
+        historicValue: [action.value],
+      };
     // reset the context to the initial state
     case "RESET":
       return { acctID: "N/A", total: 0, assets: [], historicValue: [] };

@@ -16,6 +16,7 @@ import {
 } from "../Components/TotalContext";
 import { FetchAccount } from "../Helpers/LoadAccount";
 import { LoadContext } from "../Helpers/LoadContext";
+import DexTrades from "../Components/DexTrades";
 
 function Account_Dash() {
   const location = useLocation();
@@ -87,7 +88,7 @@ function Account_Dash() {
       // use helper function to set context of balances and values
       LoadContext(data, dispatch);
       // set operations with helper function
-      let opsTemp = await GetOperations(addressState);
+      let opsTemp = await GetOperations(accountID);
       setOps(opsTemp);
     })();
   }, [addressState]);
@@ -122,6 +123,9 @@ function Account_Dash() {
         </div>
         <div className="Trades">
           <Trades key={"6"} acctID={addressState} ops={ops} />
+        </div>
+        <div>
+          <DexTrades />
         </div>
       </div>
     </TotalContext.Provider>

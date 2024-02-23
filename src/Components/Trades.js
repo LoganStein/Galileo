@@ -22,7 +22,7 @@ function Trades(props) {
 
   useEffect(() => {
     setOps(props.ops);
-    console.log("my ops", ops);
+    // console.log("my ops", ops);
   }, [props.ops]);
 
   useEffect(() => {
@@ -50,7 +50,7 @@ function Trades(props) {
               dest = ops[i].to;
             } else if (ops[i].type == "claim_claimable_balance") {
               source = ops[i].source_account;
-              console.log("op!", ops[i]);
+              // console.log("op!", ops[i]);
             } else if (ops[i].type == "liquidity_pool_deposit") {
               let poolReserves = ops[i].reserves_max;
               shares = ops[i].shares_received;

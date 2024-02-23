@@ -11,6 +11,6 @@ export async function LoadAccount(acctID) {
 export async function FetchAccount(acctID) {
   const resp = await fetch("https://horizon.stellar.org/accounts/" + acctID);
   const data = await resp.json();
-  // console.log("API CALL");
+  console.log("hmm", data);
   return data;
 }

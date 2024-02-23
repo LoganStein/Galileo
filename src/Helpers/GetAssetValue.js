@@ -21,8 +21,21 @@ async function GetAssetValue(assetCode, assetIssuer, amount) {
   let resp;
   let reserves;
 
+  if (
+    assetCode == "ICE" ||
+    assetCode == "governICE" ||
+    assetCode == "upvoteICE" ||
+    assetCode == "downvoteICE"
+  ) {
+    return 0;
+  }
+
   if (assetCode != "yBTC" && assetCode != "yETH" && assetCode != "USDC") {
     resp = await server.liquidityPools().forAssets([ASSET, USDC]).call();
+    // console.log("resp", resp);
+    if (resp.records.length == 0) {
+      return 0;
+    }
     reserves = resp.records[0].reserves; // getting empty response for pool with ybtc
   } else {
     // hard code yBTC liquidity pool because records.reserves wasn't working for yBTC
@@ -48,13 +61,17 @@ async function GetAssetValue(assetCode, assetIssuer, amount) {
       reserves = resp.reserves;
     }
   }
-
-  if (reserves[1].asset == USDC || reserves[1].asset == yUSDC) {
-    let val = (reserves[1].amount / reserves[0].amount) * amount;
-    total = val;
-  } else {
-    let val = (reserves[0].amount / reserves[1].amount) * amount;
-    total = val;
+  try {
+    if (reserves[1].asset == USDC || reserves[1].asset == yUSDC) {
+      let val = (reserves[1].amount / reserves[0].amount) * amount;
+      total = val;
+    } else {
+      let val = (reserves[0].amount / reserves[1].amount) * amount;
+      total = val;
+    }
+  } catch (err) {
+    console.log("err", err, reserves, assetCode);
+    return 0;
   }
   // console.log("API CALL");
   return total;
