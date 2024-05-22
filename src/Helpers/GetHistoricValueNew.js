@@ -219,7 +219,7 @@ export async function GetHistoricValue(totalContext, days) {
         dayValue += assetPrice * asset.bal;
       }
       // add the value to the historic value
-      return { date: moment(currentDate), value: dayValue };
+      return { date: moment(currentDate), value: dayValue, bals: day.bals };
     })
   );
   console.log("value_history", value_history);

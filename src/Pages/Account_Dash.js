@@ -5,7 +5,7 @@ import Value from "../Components/Value";
 import Chart from "../Components/Chart";
 import Asset_Values from "../Components/Asset_Values";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect, useReducer } from "react";
+import { useState, useEffect, useReducer, useContext } from "react";
 import Income from "../Components/Income";
 import Trades from "../Components/Trades";
 import GetOperations from "../Helpers/GetOperations";
@@ -17,15 +17,18 @@ import {
 import { FetchAccount } from "../Helpers/LoadAccount";
 import { LoadContext } from "../Helpers/LoadContext";
 import DexTrades from "../Components/DexTrades";
+import { GetHistoricValue } from "../Helpers/GetHistoricValueNew";
 
 function Account_Dash() {
   const location = useLocation();
   const [addressState, setAddress] = useState(location.state.address);
   const [stellarResp, setResp] = useState({});
+  const [data, setData] = useState([]);
   const [ops, setOps] = useState([]);
   const navigate = useNavigate();
 
   const [total, dispatch] = useReducer(reducer, initialState);
+  const totalContext = useContext(TotalContext);
 
   useEffect(() => {
     // set values to empty before getting real data
@@ -93,6 +96,17 @@ function Account_Dash() {
     })();
   }, [addressState]);
 
+  useEffect(() => {
+    console.log("Loading:", total);
+    async function getValueHistory() {
+      GetHistoricValue({ totalState: total }, 5).then((histVal) => {
+        console.log("wtf", histVal);
+        setData(histVal);
+      });
+    }
+    total.acctID != "N/A" ? getValueHistory() : console.log("no acctID");
+  }, [total.assets]);
+
   return (
     <TotalContext.Provider
       value={{ totalState: total, totalDispatch: dispatch }}
@@ -113,7 +127,15 @@ function Account_Dash() {
         </div>
         <div className="val-chart">
           <Value key={"2"} dollarValue={0} balances={stellarResp.balances} />
-          <Chart key={"3"} />
+          {/* <div className="chart-placeholder"> */}
+          <Chart
+            key={"3"}
+            margin={{ top: 30, bottom: 30, left: 60, right: 30 }}
+            data={data}
+            height={"50vh"}
+            width={"45%"}
+          />
+          {/* </div> */}
         </div>
         <div className="Assets">
           <Asset_Values key={"4"} acct_data={stellarResp} />
@@ -125,7 +147,7 @@ function Account_Dash() {
           <Trades key={"6"} acctID={addressState} ops={ops} />
         </div>
         <div>
-          <DexTrades />
+          <DexTrades key={"7"} ops={ops} />
         </div>
       </div>
     </TotalContext.Provider>

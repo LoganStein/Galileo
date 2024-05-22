@@ -16,8 +16,8 @@ function Trades(props) {
     "create_claimable_balance",
     "set_trust_line_flags",
     "clawback",
-    // "manage_sell_offer",
-    // "manage_buy_offer",
+    "manage_sell_offer",
+    "manage_buy_offer",
   ];
 
   useEffect(() => {
@@ -108,7 +108,11 @@ function Trades(props) {
               } else {
                 token = "XLM";
               }
-              buying_token = ops[i].buying_asset_code;
+              if (ops[i].buying_asset_type !== "native") {
+                buying_token = ops[i].buying_asset_code;
+              } else {
+                buying_token = "XLM";
+              }
               price = ops[i].price;
               issuer = ops[i].buying_asset_issuer;
               selling_token = token;

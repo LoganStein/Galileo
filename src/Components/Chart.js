@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 // import { GetHistoricValue } from "../Helpers/GetHistoricValue";
 import { GetHistoricValue } from "../Helpers/GetHistoricValueNew";
 import * as d3 from "d3";
-import { TotalContext } from "./TotalContext";
+// import { TotalContext } from "./TotalContext";
 import GetEffects from "../Helpers/GetEffects";
 
 const tooltipStyle = {
@@ -14,21 +14,10 @@ const tooltipStyle = {
   padding: "5px",
 };
 
-function Chart({ margin = { top: 30, bottom: 30, left: 60, right: 30 } }) {
-  const [data, setData] = useState([]);
+function Chart(props) {
+  const data = props.data;
+  console.log("chart data", data);
   const tooltipRef = useRef(null);
-  const totalContext = useContext(TotalContext);
-  useEffect(() => {
-    async function getValueHistory() {
-      GetHistoricValue(totalContext, 5).then((histVal) => {
-        console.log("wtf", histVal);
-        setData(histVal);
-      });
-    }
-    totalContext.totalState.acctID != "N/A"
-      ? getValueHistory()
-      : console.log("no acctID");
-  }, [totalContext.totalState.assets]);
 
   const parentRef = useRef(null);
 
@@ -38,7 +27,7 @@ function Chart({ margin = { top: 30, bottom: 30, left: 60, right: 30 } }) {
   const x = d3
     .scaleTime()
     .domain(d3.extent(data, (d) => d.date))
-    .range([margin.left, width - margin.right]);
+    .range([props.margin.left, width - props.margin.right]);
 
   const y = d3
     .scaleLinear()
@@ -46,7 +35,7 @@ function Chart({ margin = { top: 30, bottom: 30, left: 60, right: 30 } }) {
       d3.min(data, (d) => d.value) - d3.min(data, (d) => d.value) * 0.01,
       d3.max(data, (d) => d.value) + d3.max(data, (d) => d.value) * 0.01,
     ])
-    .range([height - margin.top, margin.bottom]);
+    .range([height - props.margin.top, props.margin.bottom]);
 
   const line = d3
     .line()
@@ -62,8 +51,8 @@ function Chart({ margin = { top: 30, bottom: 30, left: 60, right: 30 } }) {
     .tickFormat((d) => `$${d}`);
 
   return (
-    <div className="chart-placeholder" ref={parentRef}>
-      <svg width="100%" height={height}>
+    <div ref={parentRef} style={{ width: props.width, height: props.height }}>
+      <svg width="100%" height={props.height}>
         <path fill="none" stroke="currentColor" d={line(data)} />
         <g fill="white" stroke="currentColor" strokeWidth="1.5">
           {data.map((d, i) => (
@@ -86,10 +75,10 @@ function Chart({ margin = { top: 30, bottom: 30, left: 60, right: 30 } }) {
             />
           ))}
         </g>
-        <g transform={`translate(0, ${height - margin.bottom})`}>
+        <g transform={`translate(0, ${height - props.margin.bottom})`}>
           <g className="axis" ref={(node) => d3.select(node).call(xAxis)} />
         </g>
-        <g transform={`translate(${margin.left}, 0)`}>
+        <g transform={`translate(${props.margin.left}, 0)`}>
           <g className="axis" ref={(node) => d3.select(node).call(yAxis)} />
         </g>
       </svg>
