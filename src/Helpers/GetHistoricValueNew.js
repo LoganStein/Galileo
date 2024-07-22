@@ -40,10 +40,7 @@ async function GetBalanceHistory(totalContext, days) {
       );
       if (effect) {
         if (effect.type === "account_credited") {
-          console.log("credit", effect.asset_code, effect.amount, bal.bal);
           if (typeof bal.bal === "string") {
-            // console.log("bal.bal is a string", bal.bal);
-            // console.log("bal", bal);
             bal.bal = parseFloat(bal.bal);
           }
           return { ...bal, bal: bal.bal - effect.amount };
@@ -55,7 +52,6 @@ async function GetBalanceHistory(totalContext, days) {
           // effect.bought_asset_type == "native" ? "XLM" : effect.bought_asset_code
           // effect.bought_amount
           // balance should be updated for both sold and bought assets
-          console.log("what is bal", bal);
           if (effect.bought_asset_type == "native") {
             console.log(
               `Trade: bought ${effect.bought_amount} ${effect.bought_asset_type} for ${effect.sold_amount} ${effect.sold_asset_code} at ${effect.created_at}`
@@ -81,11 +77,9 @@ async function GetBalanceHistory(totalContext, days) {
       }
       return bal;
     });
-    console.log("jester", newDate.format("MM/DD"), newBalance);
     // push new date and balance to dailyBalances
     dailyBalances.push({ date: newDate, bals: newBalance });
   }
-  console.log("End daily balance", dailyBalances);
   return dailyBalances;
 }
 
@@ -110,7 +104,6 @@ async function GetBalanceHistory_new(totalContext, days) {
             effect.bought_asset_code === balance.code)
       );
       // update the balance for each asset
-      console.log("ooga", todaysBalance);
 
       if (effect) {
         if (effect.type === "trade") {
@@ -119,7 +112,6 @@ async function GetBalanceHistory_new(totalContext, days) {
           // effect.bought_asset_type == "native" ? "XLM" : effect.bought_asset_code
           // effect.bought_amount
           // balance should be updated for both sold and bought assets
-          console.log("what is bal", balance);
           if (effect.bought_asset_type == "native") {
             console.log(
               `Trade: bought ${effect.bought_amount} ${effect.bought_asset_type} for ${effect.sold_amount} ${effect.sold_asset_code} at ${effect.created_at}`
@@ -185,6 +177,30 @@ function transform_asset_history(assets_history) {
   return transformedData;
 }
 
+/**
+ * Checks value_history for missing days and fills in the missing days with the previous day's value.
+ * most recent day is the first element in the array
+ * @param {Array} value_history - The array of value history data.
+ * @returns {Array} - The filled value history data.
+ */
+function fill_missing_days(value_history) {
+  let filledData = [];
+  for (let i = 0; i < value_history.length; i++) {
+    let current = value_history[i];
+    let next = value_history[i + 1];
+    if (current.value === 0) {
+      filledData.push({
+        date: current.date,
+        value: next.value,
+        bals: current.bals,
+      });
+    } else {
+      filledData.push(current);
+    }
+  }
+  return filledData;
+}
+
 export async function GetHistoricValue(totalContext, days) {
   var requestOptions = {
     method: "GET",
@@ -212,7 +228,6 @@ export async function GetHistoricValue(totalContext, days) {
                 }/${day.date.format("YYYY-MM-DD")}`,
                 requestOptions
               ).then((response) => response.json());
-        // console.log("RESPECT find out what it means to me:", ApiResp);
         let assetPrice = ApiResp.length != 0 ? ApiResp[0][2] : 0;
         currentDate = ApiResp.length != 0 ? ApiResp[0][1] : day.date;
         dayValue += assetPrice * parseFloat(asset.bal);
@@ -221,8 +236,11 @@ export async function GetHistoricValue(totalContext, days) {
       return { date: moment(currentDate), value: dayValue, bals: day.bals };
     })
   );
-  console.log("value_history", value_history);
+  // this is setting the most recent day's value (current day) to set the time to start of day and the value to current value.
   value_history[0].date = moment().startOf("day");
   value_history[0].value = totalContext.totalState.total;
-  return value_history;
+
+  // console.log("historic value", value_history);
+  // console.log("filled historc value", fill_missing_days(value_history));
+  return fill_missing_days(value_history);
 }
