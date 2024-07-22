@@ -1,56 +1,27 @@
-import React, { useEffect } from "react";
+import { React, useContext } from "react";
 import Asset from "./Asset";
+import { TotalContext } from "../Components/TotalContext";
 
-function Asset_Values(props) {
+function Asset_Values() {
   let assets = [];
-  // console.log("dude", assets)
-
-  // useEffect(() => {
-  if (Object.keys(props.acct_data).length != 0) {
-    props.acct_data.balances.sort((a, b) => b.balance - a.balance);
+  const totalContext = useContext(TotalContext);
+  if (totalContext.totalState.assets.length != 0) {
+    totalContext.totalState.assets.sort((a, b) => b.val - a.val);
     let i = 0;
-    props.acct_data.balances.forEach((balance) => {
-      // show non zero balance assets
-      if (balance.balance > 0.0000001) {
-        if (
-          balance.asset_type == "credit_alphanum4" ||
-          balance.asset_type == "credit_alphanum12"
-        ) {
-          //assets
-          assets.push(
-            <Asset
-              key={Number(i++).toString()}
-              assetCode={balance.asset_code}
-              amount={balance.balance}
-              assetIssuer={balance.asset_issuer}
-              pool={false}
-            />
-          );
-        } else if (balance.asset_type == "native") {
-          // lumens
-          assets.push(
-            <Asset
-              key={Number(i++).toString()}
-              assetCode={"XLM"}
-              amount={balance.balance}
-              pool={false}
-            />
-          );
-        } else if (balance.asset_type == "liquidity_pool_shares") {
-          assets.push(
-            <Asset
-              key={Number(i++).toString()}
-              assetCode={"Liquidity Pool shares"}
-              amount={balance.balance}
-              poolID={balance.liquidity_pool_id}
-              pool={true}
-            />
-          );
-        }
-      }
+    totalContext.totalState.assets.forEach((balance) => {
+      //assets
+      assets.push(
+        <Asset
+          key={Number(i++).toString()}
+          assetCode={balance.code}
+          amount={balance.bal}
+          value={balance.val}
+          pool={false}
+        />
+      );
     });
   }
-  // });
+
   return (
     <div className="assets-container" id="testing">
       <div className="assets-header">

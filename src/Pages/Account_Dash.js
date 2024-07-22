@@ -5,55 +5,38 @@ import Value from "../Components/Value";
 import Chart from "../Components/Chart";
 import Asset_Values from "../Components/Asset_Values";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  useState,
-  useEffect,
-  useContext,
-  createContext,
-  useReducer,
-} from "react";
+import { useState, useEffect, useReducer, useContext } from "react";
 import Income from "../Components/Income";
 import Trades from "../Components/Trades";
-import ClipAddr from "../Helpers/ClipAddr";
 import GetOperations from "../Helpers/GetOperations";
-export const TotalContext = createContext();
+import {
+  TotalContext,
+  initialState,
+  reducer,
+} from "../Components/TotalContext";
+import { FetchAccount } from "../Helpers/LoadAccount";
+import { LoadContext } from "../Helpers/LoadContext";
+import DexTrades from "../Components/DexTrades";
+import { GetHistoricValue } from "../Helpers/GetHistoricValueNew";
 
 function Account_Dash() {
   const location = useLocation();
   const [addressState, setAddress] = useState(location.state.address);
   const [stellarResp, setResp] = useState({});
+  const [data, setData] = useState([]);
   const [ops, setOps] = useState([]);
   const navigate = useNavigate();
 
-  const initialState = { total: 0, assets: [] };
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case "ADD_ASSET":
-        const assetExists = state.assets.some(
-          (asset) => asset.code === action.value.code
-        );
-        if (!assetExists) {
-          return {
-            total: state.total + action.value.val,
-            assets: [...state.assets, action.value],
-          };
-        } else {
-          return state;
-        }
-      case "RESET":
-        return { total: 0, assets: [] };
-      default:
-        return state;
-    }
-  };
-
   const [total, dispatch] = useReducer(reducer, initialState);
+  const totalContext = useContext(TotalContext);
+
   useEffect(() => {
+    // set values to empty before getting real data
     let accountID = "";
     dispatch({ type: "RESET", value: 0 });
-    // block from stellar api docs
-    var StellarSdk = require("stellar-sdk");
-    var server = new StellarSdk.Server("https://horizon.stellar.org");
+    // var StellarSdk = require("stellar-sdk");
+    // var server = new StellarSdk.Server("https://horizon.stellar.org");
+
     // some quick address lookup's instead of using the full address
     switch (addressState.toLowerCase()) {
       case "me":
@@ -92,40 +75,37 @@ function Account_Dash() {
         accountID = addressState;
         break;
     }
-    // weirdly doesnt always work???
-    // (async () => {
-    //   await server
-    //     .loadAccount(accountID)
-    //     .then(function (resp) {
-    //       setResp(resp);
-    //       console.log("RESPONSE", resp);
-    //     })
-    //     .catch(function (err) {
-    //       // alert("wallet does not exist");
-    //       console.log(accountID, err);
-    //     });
-    // })();
-
-    // same as above but only using fetch
+    // loads the account and data we need
     (async () => {
-      const resp = await fetch(
-        "https://horizon.stellar.org/accounts/" + accountID
-      );
-      const data = await resp.json();
-      console.log(data);
+      // wait for helper function to get account data
+      let data = await FetchAccount(accountID);
+      // if the response status is 400 (bad request) go back to search page
       if (data.status === 400) {
         alert("The wallet does not exist");
         navigate("/");
       }
+      // set state with account data from helper function
       setResp(data);
-    })();
-    (async () => {
-      let opsTemp = await GetOperations(addressState);
+      // set the account ID in the context
+      dispatch({ type: "SET_ACCT", value: accountID });
+      // use helper function to set context of balances and values
+      LoadContext(data, dispatch);
+      // set operations with helper function
+      let opsTemp = await GetOperations(accountID);
       setOps(opsTemp);
     })();
-    // end stellar api docs block
-    // use addressState to query the stellar API? to get account data
   }, [addressState]);
+
+  useEffect(() => {
+    console.log("Loading:", total);
+    async function getValueHistory() {
+      GetHistoricValue({ totalState: total }, 5).then((histVal) => {
+        console.log("wtf", histVal);
+        setData(histVal);
+      });
+    }
+    total.acctID != "N/A" ? getValueHistory() : console.log("no acctID");
+  }, [total.assets]);
 
   return (
     <TotalContext.Provider
@@ -147,7 +127,15 @@ function Account_Dash() {
         </div>
         <div className="val-chart">
           <Value key={"2"} dollarValue={0} balances={stellarResp.balances} />
-          <Chart key={"3"} />
+          {/* <div className="chart-placeholder"> */}
+          <Chart
+            key={"3"}
+            margin={{ top: 30, bottom: 30, left: 60, right: 30 }}
+            data={data}
+            height={"50vh"}
+            width={"45%"}
+          />
+          {/* </div> */}
         </div>
         <div className="Assets">
           <Asset_Values key={"4"} acct_data={stellarResp} />
@@ -157,6 +145,9 @@ function Account_Dash() {
         </div>
         <div className="Trades">
           <Trades key={"6"} acctID={addressState} ops={ops} />
+        </div>
+        <div>
+          <DexTrades key={"7"} ops={ops} />
         </div>
       </div>
     </TotalContext.Provider>

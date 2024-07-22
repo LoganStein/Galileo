@@ -1,70 +1,70 @@
-import React, { useContext, useEffect, useState } from "react";
-import GetAssetValue from "../Helpers/GetAssetValue";
-import GetPoolAssets from "../Helpers/GetPoolAssets";
-import GetPoolValue from "../Helpers/GetPoolValue";
-import { TotalContext } from "../Pages/Account_Dash";
-
-// check for usdc and use the amount as the value because there is no usdc:usdc LP to calculate value from
+import React, { useState } from "react";
+import Chart from "../Components/Chart";
 
 function Asset(props) {
-  const totalContext = useContext(TotalContext);
-  const [value, setValue] = useState(0);
-  const [assetCode, setAssetCode] = useState("...");
-  useEffect(() => {
-    setAssetCode(props.assetCode);
-    if (props.pool == false) {
-      // asset is not LP shares
-      if (props.assetCode != "USDC") {
-        // usdc doesnt have an lp to get value from
-        GetAssetValue(props.assetCode, props.assetIssuer, props.amount).then(
-          (val) => {
-            setValue(val.toFixed(2));
-            //set elevated state (total) with total + val
+  const [displaySats, setDisplaySats] = useState(true);
+  var requestOptions = {
+    method: "GET",
+    redirect: "follow",
+  };
 
-            totalContext.totalDispatch({
-              type: "ADD_ASSET",
-              value: { code: props.assetCode, val: val },
-            });
-
-            // console.log(props.assetCode, val);
-          }
-        );
-      } else {
-        // instead value is just the amount (1:1 with dollar)
-        setValue(Number(props.amount).toFixed(2));
-        let val = Number(props.amount);
-
-        totalContext.totalDispatch({
-          type: "ADD_ASSET",
-          value: { code: props.assetCode, val: val },
-        });
-      }
-    } else if (props.pool == true) {
-      let poolCode = "";
-      GetPoolAssets(props.poolID).then((val) => {
-        poolCode = val;
-      });
-      // asset is LP shares
-      GetPoolValue(props.poolID, props.amount).then((val) => {
-        setValue(val.toFixed(2));
-        //set elevated state (total) with total + val
-        totalContext.totalDispatch({
-          type: "ADD_ASSET",
-          value: { code: poolCode, val: val },
-        });
-      });
-      GetPoolAssets(props.poolID).then((assets) => {
-        setAssetCode(assets);
-      });
-    }
-  }, []);
-  return (
-    <div className="Asset">
-      <h4>{assetCode || "..."}</h4>
-      <p>{props.amount || 215}</p>
-      <p>${Number(value).toLocaleString("en-US")} USD</p>
-    </div>
-  );
+  if (props.assetCode === "BTC") {
+    return (
+      <>
+        <div
+          className="Asset"
+          onClick={() => {
+            document
+              .getElementById(props.assetCode + "AssetChart")
+              .classList.toggle("hidden");
+          }}
+        >
+          <h4>{props.assetCode || "..."}</h4>
+          <p
+            className="clickable"
+            onClick={() => {
+              setDisplaySats(!displaySats);
+            }}
+          >
+            {displaySats
+              ? (props.amount * 100000000).toLocaleString()
+              : props.amount}{" "}
+            sats
+          </p>
+          <p>${Number(props.value.toFixed(2)).toLocaleString("en-US")} USD</p>
+        </div>
+        <div
+          id={props.assetCode + "AssetChart"}
+          style={{ width: "90%" }}
+          className="hidden"
+        >
+          <Chart
+            key={props.assetCode + "AssetChart"}
+            margin={{ top: 30, bottom: 30, left: 60, right: 30 }}
+            data={[
+              { date: new Date("2024-05-14"), value: 61524.950858 },
+              { date: new Date("2024-05-15"), value: 66166.565942 },
+              { date: new Date("2024-05-16"), value: 65224.896289 },
+              { date: new Date("2024-05-17"), value: 66789.241129 },
+              { date: new Date("2024-05-18"), value: 66893.026684 },
+              { date: new Date("2024-05-19"), value: 66209.507304 },
+              { date: new Date("2024-05-20"), value: 71095.111211 },
+            ]}
+            height={"200px"}
+            width={"50%"}
+          />
+        </div>
+      </>
+    );
+  } else {
+    return (
+      <div className="Asset">
+        <h4>{props.assetCode || "..."}</h4>
+        <p>{props.amount || 215}</p>
+        <p>${Number(props.value.toFixed(2)).toLocaleString("en-US")} USD</p>
+      </div>
+    );
+  }
 }
 
 export default Asset;

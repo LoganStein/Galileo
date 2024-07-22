@@ -125,18 +125,31 @@ function Transaction(props) {
         </a>
       );
     } else if (props.type == "manage_buy_offer") {
-      setMsg(
-        "Buying " +
-          props.asset +
-          " with " +
-          props.selling_asset +
-          " at " +
-          props.price +
-          " " +
-          props.selling_asset +
-          "/" +
-          props.asset
-      );
+      if (props.amount != 0) {
+        setMsg(
+          "Buying " +
+            props.asset +
+            " with " +
+            props.selling_asset +
+            " at " +
+            props.price +
+            " " +
+            props.selling_asset +
+            "/" +
+            props.asset
+        );
+      } else {
+        setMsg(
+          "Cancelled buy offer for " +
+            props.asset +
+            " at " +
+            props.price +
+            " " +
+            props.buying_asset +
+            "/" +
+            props.selling_asset
+        );
+      }
       setIcon(<BsArrowLeftRight size={"1.5rem"} />);
       let amount = props.amount * props.price;
       if (props.selling_asset != "USDC") {
@@ -147,7 +160,40 @@ function Transaction(props) {
         setVal(amount.toFixed(4));
       }
     } else if (props.type == "manage_sell_offer") {
-      setMsg("selling");
+      if (props.amount != 0) {
+        setMsg(
+          "Selling " +
+            props.asset +
+            " for " +
+            props.buying_asset +
+            " at " +
+            props.price +
+            " " +
+            props.buying_asset +
+            "/" +
+            props.selling_asset
+        );
+      } else {
+        setMsg(
+          "Cancelled sell offer for " +
+            props.asset +
+            " at " +
+            props.price +
+            " " +
+            props.buying_asset +
+            "/" +
+            props.selling_asset
+        );
+      }
+      setIcon(<BsArrowLeftRight size={"1.5rem"} />);
+      let amount = props.amount * props.price;
+      if (props.selling_asset != "USDC") {
+        GetAssetValue(props.selling_asset, props.issuer, amount).then((v) => {
+          setVal(v.toFixed(4));
+        });
+      } else {
+        setVal(amount.toFixed(4));
+      }
     } else {
       // console.log("unhandled: ", props.type);
     }

@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
 import "../CSS/Value.css";
-import { TotalContext } from "../Pages/Account_Dash";
+import { TotalContext } from "../Components/TotalContext";
 import CircleChart from "./CircleChart";
 
 function Value() {
+  // fake data in case real data doesn't come through
   const data = [
     {
       id: "make",
@@ -39,7 +40,7 @@ function Value() {
 
   const totalContext = useContext(TotalContext);
 
-  const realData = totalContext.totalState.assets.map((asset, index) => {
+  const realData = totalContext.totalState.assets.map((asset) => {
     return {
       id: asset.code,
       label: asset.code,
@@ -47,7 +48,6 @@ function Value() {
     };
   });
 
-  // Value is incorrect (doubled) in development but on build it works correctly
   let totalNum = totalContext.totalState.total.toFixed(2);
   let str = Number(totalNum).toLocaleString("en-US");
   return (
