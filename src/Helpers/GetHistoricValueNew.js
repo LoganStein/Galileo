@@ -212,11 +212,10 @@ export async function GetHistoricValue(totalContext, days) {
                 }/${day.date.format("YYYY-MM-DD")}`,
                 requestOptions
               ).then((response) => response.json());
-        console.log(ApiResp);
+        // console.log("RESPECT find out what it means to me:", ApiResp);
         let assetPrice = ApiResp.length != 0 ? ApiResp[0][2] : 0;
         currentDate = ApiResp.length != 0 ? ApiResp[0][1] : day.date;
-        console.log("return", assetPrice, asset.bal, assetPrice * asset.bal);
-        dayValue += assetPrice * asset.bal;
+        dayValue += assetPrice * parseFloat(asset.bal);
       }
       // add the value to the historic value
       return { date: moment(currentDate), value: dayValue, bals: day.bals };
