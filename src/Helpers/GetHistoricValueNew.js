@@ -228,7 +228,7 @@ export async function GetHistoricValue(totalContext, days) {
                 }/${day.date.format("YYYY-MM-DD")}`,
                 requestOptions
               ).then((response) => response.json());
-        let assetPrice = ApiResp.length != 0 ? ApiResp[0][2] : 0;
+        let assetPrice = ApiResp.length != 0 ? ApiResp[0]["usd_price"] : 0;
         currentDate = ApiResp.length != 0 ? ApiResp[0][1] : day.date;
         dayValue += assetPrice * parseFloat(asset.bal);
       }
