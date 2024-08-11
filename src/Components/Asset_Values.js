@@ -14,6 +14,7 @@ function Asset_Values() {
         <Asset
           key={Number(i++).toString()}
           assetCode={balance.code}
+          assetIssuer={balance.issuer}
           amount={balance.bal}
           value={balance.val}
           pool={false}

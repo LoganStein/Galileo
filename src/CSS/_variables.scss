@@ -4,3 +4,7 @@ $light: rgb(183, 183, 183);
   align-items: center;
   justify-content: center;
 }
+
+@mixin dev {
+  border: 1px solid red;
+}

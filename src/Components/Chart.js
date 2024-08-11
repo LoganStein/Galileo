@@ -18,11 +18,33 @@ function Chart(props) {
   const data = props.data;
   console.log("chart data", data);
   const tooltipRef = useRef(null);
+  const margin = props.margin;
 
   const parentRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-  const width = parentRef.current ? parentRef.current.offsetWidth : 0;
-  const height = parentRef.current ? parentRef.current.offsetHeight : 0;
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      if (!entries || entries.length === 0) return;
+      const { width, height } = entries[0].contentRect;
+      setDimensions({ width, height });
+    });
+
+    if (parentRef.current) {
+      resizeObserver.observe(parentRef.current);
+    }
+
+    return () => {
+      if (parentRef.current) {
+        resizeObserver.unobserve(parentRef.current);
+      }
+    };
+  }, []);
+
+  // const width = parentRef.current ? parentRef.current.offsetWidth : 0;
+  // const height = parentRef.current ? parentRef.current.offsetHeight : 0;
+  const width = dimensions.width - margin.left - margin.right;
+  const height = dimensions.height - margin.top - margin.bottom;
 
   const x = d3
     .scaleTime()

@@ -12,4 +12,17 @@
   position: absolute;
   width: 30%;
   transform: translateY(-50%);
+}
+
+.asset-chart {
+  display: flex;
+  width: 93%;
+}
+
+.asset-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 1rem;
+  width: 30%;
 }/*# sourceMappingURL=Value.css.map */

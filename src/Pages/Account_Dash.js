@@ -19,6 +19,22 @@ import { LoadContext } from "../Helpers/LoadContext";
 import DexTrades from "../Components/DexTrades";
 import { GetHistoricValue } from "../Helpers/GetHistoricValueNew";
 
+function getPercentChange(data) {
+  if (data.length === 0) return 0;
+  const endPrice = data[0].value;
+  const startPrice = data[data.length - 1].value;
+  const percentChange = ((endPrice - startPrice) / startPrice) * 100;
+  return percentChange.toFixed(2);
+}
+
+function getDollarChange(data) {
+  if (data.length === 0) return 0;
+  const endPrice = data[0].value;
+  const startPrice = data[data.length - 1].value;
+  const dollarChange = endPrice - startPrice;
+  return dollarChange.toLocaleString("en-US");
+}
+
 function Account_Dash() {
   const location = useLocation();
   const [addressState, setAddress] = useState(location.state.address);
@@ -130,14 +146,17 @@ function Account_Dash() {
           {/* <div className="chart-placeholder"> */}
           <Chart
             key={"3"}
-            margin={{ top: 30, bottom: 30, left: 60, right: 30 }}
+            margin={{ top: 10, bottom: 10, left: 50, right: 0 }}
             data={data}
             height={"50vh"}
-            width={"45%"}
+            width={"44%"}
           />
+
           {/* </div> */}
         </div>
         <div className="Assets">
+          <p>{getPercentChange(data)}% in the last 7 days</p>
+          <p>${getDollarChange(data)} in the last 7 days</p>
           <Asset_Values key={"4"} acct_data={stellarResp} />
         </div>
         <div className="Income">

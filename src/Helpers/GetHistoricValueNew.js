@@ -201,6 +201,7 @@ function fill_missing_days(value_history) {
   return filledData;
 }
 
+// TODO: Need to update how we get historic balances of accounts. High activity accounts can't get balances of more than 1 day ago.
 export async function GetHistoricValue(totalContext, days) {
   var requestOptions = {
     method: "GET",
