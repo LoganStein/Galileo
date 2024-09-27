@@ -7,8 +7,6 @@ async function GetTransactions(acctID) {
     .order("desc")
     .limit(10)
     .call();
-  // console.log("API CALL");
-  // console.count();
   return resp;
 }
 

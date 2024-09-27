@@ -22,16 +22,13 @@ function Trades(props) {
 
   useEffect(() => {
     setOps(props.ops);
-    // console.log("my ops", ops);
   }, [props.ops]);
 
   useEffect(() => {
-    // console.log("useEffect", ops);
     let i = 0;
     (async () => {
       let temp = [];
       for (let i = 0; i < toDisplay; i++) {
-        // console.log("adding transaction");
         // only perform if this operation is supported
         if (ops[i]) {
           if (!unsupported.includes(ops[i].type)) {
@@ -50,7 +47,6 @@ function Trades(props) {
               dest = ops[i].to;
             } else if (ops[i].type == "claim_claimable_balance") {
               source = ops[i].source_account;
-              // console.log("op!", ops[i]);
             } else if (ops[i].type == "liquidity_pool_deposit") {
               let poolReserves = ops[i].reserves_max;
               shares = ops[i].shares_received;
@@ -153,7 +149,6 @@ function Trades(props) {
         }
       }
       setTransactions(temp);
-      // console.log("useEffect", temp);
     })();
   }, [toDisplay, ops]);
   return (

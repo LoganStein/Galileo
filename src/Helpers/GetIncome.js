@@ -47,8 +47,6 @@ async function GetIncome(ops, acctID) {
     incomeByHour[hour].push(parsed);
   });
 
-  // console.log("income by hour", incomeByHour);
-
   let dailyTotal = 0;
 
   // use Promise.all to wait for all promises to resolve before continuing with calculation
@@ -59,8 +57,6 @@ async function GetIncome(ops, acctID) {
   });
   const values = await Promise.all(promises);
   dailyTotal = values.reduce((acc, val) => acc + val, 0);
-
-  // console.log("my final avg", dailyTotal / 24);
 
   let hourly = dailyTotal / 24;
   return { hr: hourly, day: dailyTotal };

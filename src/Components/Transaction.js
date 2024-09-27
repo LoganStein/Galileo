@@ -44,7 +44,6 @@ function Transaction(props) {
       setAddrLink(
         <a
           onClick={() => {
-            console.log("link clicked");
             navigate("/Dashboard", { state: { address: props.srcAcct } });
             window.location.reload(false);
           }}
@@ -62,7 +61,6 @@ function Transaction(props) {
       setAddrLink(
         <a
           onClick={() => {
-            console.log("link clicked");
             navigate("/Dashboard", { state: { address: props.destAcct } });
             window.location.reload(false);
           }}
@@ -70,7 +68,6 @@ function Transaction(props) {
           {ClipAddr(props.destAcct)}
         </a>
       );
-      console.log(props.destAcct);
       GetAssetValue(props.asset, props.issuer, props.amount).then((v) => {
         setVal(v.toFixed(4));
       });
@@ -116,7 +113,6 @@ function Transaction(props) {
       setAddrLink(
         <a
           onClick={() => {
-            // console.log("link clicked");
             navigate("/Dashboard", { state: { address: props.srcAcct } });
             window.location.reload(false);
           }}
@@ -195,7 +191,6 @@ function Transaction(props) {
         setVal(amount.toFixed(4));
       }
     } else {
-      // console.log("unhandled: ", props.type);
     }
   }, []);
   return (

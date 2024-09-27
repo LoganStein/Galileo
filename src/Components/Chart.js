@@ -16,7 +16,6 @@ const tooltipStyle = {
 
 function Chart(props) {
   const data = props.data;
-  console.log("chart data", data);
   const tooltipRef = useRef(null);
   const margin = props.margin;
 

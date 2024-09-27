@@ -7,8 +7,6 @@ async function GetOperations(acctID, limit = 75) {
     .limit(limit)
     .order("desc")
     .call();
-  // console.log("API CALL");
-  // console.log(ops);
   return ops.records;
 }
 export default GetOperations;

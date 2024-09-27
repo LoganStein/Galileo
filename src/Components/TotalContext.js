@@ -24,7 +24,6 @@ export const reducer = (state, action) => {
       );
       if (!assetExists) {
         // adds the asset to the asset list and adds the value to the total value
-        console.log("adding asset", action.value);
         return {
           acctID: state.acctID,
           total: state.total + action.value.val,

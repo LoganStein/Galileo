@@ -185,7 +185,7 @@ function transform_asset_history(assets_history) {
  */
 function fill_missing_days(value_history) {
   let filledData = [];
-  for (let i = 0; i < value_history.length; i++) {
+  for (let i = 0; i < value_history.length - 1; i++) {
     let current = value_history[i];
     let next = value_history[i + 1];
     if (current.value === 0) {
@@ -222,15 +222,23 @@ export async function GetHistoricValue(totalContext, days) {
                   asset.code
                 }/native/${day.date.format("YYYY-MM-DD")}`,
                 requestOptions
-              ).then((response) => response.json())
+              )
+                .then((response) => response.json())
+                .catch((error) => {
+                  console.log("error", error);
+                })
             : await fetch(
                 `http://loganjstein.com:8080/${asset.code}/${
                   asset.issuer
                 }/${day.date.format("YYYY-MM-DD")}`,
                 requestOptions
-              ).then((response) => response.json());
+              )
+                .then((response) => response.json())
+                .catch((error) => {
+                  console.log("error", error);
+                });
         let assetPrice = ApiResp.length != 0 ? ApiResp[0]["usd_price"] : 0;
-        currentDate = ApiResp.length != 0 ? ApiResp[0][1] : day.date;
+        currentDate = day.date;
         dayValue += assetPrice * parseFloat(asset.bal);
       }
       // add the value to the historic value
@@ -241,7 +249,5 @@ export async function GetHistoricValue(totalContext, days) {
   value_history[0].date = moment().startOf("day");
   value_history[0].value = totalContext.totalState.total;
 
-  // console.log("historic value", value_history);
-  // console.log("filled historc value", fill_missing_days(value_history));
   return fill_missing_days(value_history);
 }

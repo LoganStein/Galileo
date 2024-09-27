@@ -7,7 +7,6 @@ async function GetEffects(acctID, limit = 15) {
     .order("desc")
     .limit(limit)
     .call();
-  // console.log("something API CALL");
   // console.count();
   return effects.records;
 }

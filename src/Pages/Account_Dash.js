@@ -113,10 +113,8 @@ function Account_Dash() {
   }, [addressState]);
 
   useEffect(() => {
-    console.log("Loading:", total);
     async function getValueHistory() {
-      GetHistoricValue({ totalState: total }, 5).then((histVal) => {
-        console.log("wtf", histVal);
+      GetHistoricValue({ totalState: total }, 7).then((histVal) => {
         setData(histVal);
       });
     }

@@ -23,8 +23,6 @@ async function GetPoolAssets(id) {
   let assetPair = "/";
 
   assetPair = asset1 + "/" + asset2;
-  // console.log("API CALL");
-  // console.count();
   return assetPair;
 }
 

@@ -32,7 +32,6 @@ async function GetAssetValue(assetCode, assetIssuer, amount) {
 
   if (assetCode != "yBTC" && assetCode != "yETH" && assetCode != "USDC") {
     resp = await server.liquidityPools().forAssets([ASSET, USDC]).call();
-    // console.log("resp", resp);
     if (resp.records.length == 0) {
       return 0;
     }
@@ -73,7 +72,6 @@ async function GetAssetValue(assetCode, assetIssuer, amount) {
     console.log("err", err, reserves, assetCode);
     return 0;
   }
-  // console.log("API CALL");
   return total;
 }
 export default GetAssetValue;
