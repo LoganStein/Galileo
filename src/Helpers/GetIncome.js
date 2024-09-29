@@ -1,7 +1,6 @@
 import GetAssetValue from "./GetAssetValue";
 
 /*
-
   There are a lot of issues with this function. It fails completely if an account is too complex.
   If the account is too active it won't show accurate information because there are no ops from
   yesterday passed in. They are buried by today's ops. 
@@ -17,6 +16,8 @@ import GetAssetValue from "./GetAssetValue";
 async function GetIncome(ops, acctID) {
   let recieved = [];
   const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10); // Get yesterday's date in ISO format (YYYY-MM-DD)
+  // check that ops contains at least 1 full day's worth of transactions
+  // if not, use the link to prev to get more ops until we have at least 1 full day's worth
   ops.forEach((op) => {
     if (op.type == "payment" && op.from != acctID) {
       const date = new Date(op.created_at).toISOString().slice(0, 10); // Get transaction date in ISO format (YYYY-MM-DD)
@@ -26,7 +27,7 @@ async function GetIncome(ops, acctID) {
     }
   });
 
-  /// Group transactions by hour
+  // Group transactions by hour
   const incomeByHour = [];
   for (let i = 0; i < 24; i++) {
     incomeByHour.push([]);

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import GetAssetValue from "../Helpers/GetAssetValue";
 import GetIncome from "../Helpers/GetIncome";
 
 function Income(props) {
