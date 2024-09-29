@@ -1,3 +1,13 @@
+/**
+ * Retrieves the asset pair from a Stellar liquidity pool given its ID.
+ *
+ * @param {string} id - The ID of the liquidity pool.
+ * @returns {Promise<string>} A promise that resolves to a string representing the asset pair in the format "asset1/asset2".
+ *
+ * @example
+ * const assetPair = await GetPoolAssets("abcdef123456");
+ * console.log(assetPair); // Outputs: "XLM/USDC"
+ */
 async function GetPoolAssets(id) {
   const StellarSdk = require("stellar-sdk");
   const server = new StellarSdk.Server("https://horizon.stellar.org");

@@ -14,8 +14,8 @@ import {
   initialState,
   reducer,
 } from "../Components/TotalContext";
-import { FetchAccount } from "../Helpers/LoadAccount";
-import { LoadContext } from "../Helpers/LoadContext";
+import { FetchAccount } from "../Helpers/LoadAccount.ts";
+import { LoadContext } from "../Helpers/LoadContext.ts";
 import DexTrades from "../Components/DexTrades";
 import { GetHistoricValue } from "../Helpers/GetHistoricValueNew";
 

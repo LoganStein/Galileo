@@ -1,8 +1,18 @@
-/*
-  This function gets the dollar value of an asset based on the account's holding. It uses one API call everytime it's called.
-*/
-
-async function GetAssetValue(assetCode, assetIssuer, amount) {
+/**
+ * Retrieves the value of a specified asset in terms of USDC.
+ *
+ * @param {string} assetCode - The code of the asset to get the value for.
+ * @param {string} assetIssuer - The issuer of the asset.
+ * @param {number} amount - The amount of the asset.
+ * @returns {Promise<number>} - The value of the asset in terms of USDC.
+ *
+ * @throws Will throw an error if there is an issue retrieving the liquidity pool reserves.
+ *
+ * @example
+ * const value = await GetAssetValue('BTC', 'GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN', 100);
+ * console.log(value); // Outputs the value of 100 BTC in terms of USDC.
+ */
+async function GetAssetValue(assetCode = "", assetIssuer = "", amount) {
   let total;
   let ASSET = "";
   if (assetCode == "XLM") {

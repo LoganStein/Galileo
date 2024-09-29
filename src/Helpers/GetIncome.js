@@ -14,6 +14,7 @@ import GetAssetValue from "./GetAssetValue";
 */
 
 async function GetIncome(ops, acctID) {
+  console.log(ops);
   let recieved = [];
   const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10); // Get yesterday's date in ISO format (YYYY-MM-DD)
   // check that ops contains at least 1 full day's worth of transactions
