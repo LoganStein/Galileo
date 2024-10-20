@@ -54,3 +54,19 @@ export type AccountData = {
   num_sponsored: number;
   paging_token: string;
 };
+
+export type OperationResponse = {
+  _links: {
+    self: { href: string; templated: boolean };
+    next: { href: string; templated: boolean };
+    prev: { href: string; templated: boolean };
+    effects: { href: string; templated: boolean };
+    precedes: { href: string; templated: boolean };
+    succeds: { href: string; templated: boolean };
+    transaction: { href: string; templated: boolean };
+  };
+  id: string;
+  paging_token: string;
+  type_i: number;
+  type: string;
+};

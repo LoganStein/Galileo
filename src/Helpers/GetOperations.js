@@ -3,7 +3,7 @@
  *
  * @param {string} acctID - The ID of the Stellar account to fetch operations for.
  * @param {number} [limit=200] - The maximum number of operations to fetch. Defaults to 200.
- * @returns {Promise<Array>} A promise that resolves to an array of operation records.
+ * @returns {Promise<StellarSdk.ServerApi.CollectionPage<StellarSdk.ServerApi.OperationRecord>} A promise that resolves to an array of operation records.
  */
 async function GetOperations(acctID, limit = 200) {
   const StellarSdk = require("stellar-sdk");
@@ -14,6 +14,6 @@ async function GetOperations(acctID, limit = 200) {
     .limit(limit)
     .order("desc")
     .call();
-  return ops.records;
+  return ops;
 }
 export default GetOperations;

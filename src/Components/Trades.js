@@ -173,7 +173,7 @@ function Trades(props) {
           setToDisplay(curDisp + 50);
           (async () => {
             let more_ops = await GetOperations(props.acctID, toDisplay);
-            setOps(more_ops);
+            setOps(more_ops.records);
           })();
         }}
       >

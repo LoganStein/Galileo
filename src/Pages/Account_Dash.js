@@ -161,10 +161,10 @@ function Account_Dash() {
           <Income key={"5"} ops={ops} acctID={addressState} />
         </div>
         <div className="Trades">
-          <Trades key={"6"} acctID={addressState} ops={ops} />
+          <Trades key={"6"} acctID={addressState} ops={ops.records} />
         </div>
         <div>
-          <DexTrades key={"7"} ops={ops} />
+          <DexTrades key={"7"} ops={ops.records} />
         </div>
       </div>
     </TotalContext.Provider>
