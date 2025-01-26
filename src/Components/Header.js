@@ -1,6 +1,6 @@
 import React from "react";
 import Small_Search from "./Small_Search";
-import "../CSS/Header.css";
+// import "../CSS/Header.css";
 import { Link } from "react-router-dom";
 
 function Header(props) {

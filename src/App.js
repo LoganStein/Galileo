@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Account_Dash from "./Pages/Account_Dash";
 import Compare from "./Pages/Compare";
 import About from "./Pages/About";
+import "./CSS/main.scss";
 
 function App() {
   return (

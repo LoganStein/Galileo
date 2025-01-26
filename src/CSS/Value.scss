@@ -1,32 +1,32 @@
-@import "./variables";
+// @import "./variables";
 
-// the circle chart is terrible on mobile just not responive enough
+// // the circle chart is terrible on mobile just not responive enough
 
-.value-container {
-  @include flexCenter;
-  width: 45%;
-  min-width: 15em;
-  height: 50vh;
-  border: 1px grey solid;
-  position: relative;
-  h1 {
-    position: absolute;
-    width: 30%;
-    transform: translateY(-50%);
-  }
-}
+// .value-container {
+//   @include flexCenter;
+//   width: 45%;
+//   min-width: 15em;
+//   height: 50vh;
+//   border: 1px grey solid;
+//   position: relative;
+//   h1 {
+//     position: absolute;
+//     width: 30%;
+//     transform: translateY(-50%);
+//   }
+// }
 
-.asset-chart {
-  // @include dev;
-  display: flex;
-  width: 93%;
-}
+// .asset-chart {
+//   // @include dev;
+//   display: flex;
+//   width: 93%;
+// }
 
-.asset-stats {
-  // @include dev;
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  gap: 1rem;
-  width: 30%;
-}
+// .asset-stats {
+//   // @include dev;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: start;
+//   gap: 1rem;
+//   width: 30%;
+// }

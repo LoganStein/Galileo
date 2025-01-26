@@ -1,46 +1,49 @@
 @import "./variables";
+@import "include-media";
+
+@import "./Header.scss";
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
 
-.Full_Search {
-  @include flexCenter;
-  flex-direction: column;
-  height: 100vh;
-}
+// .Full_Search {
+//   @include flexCenter;
+//   flex-direction: column;
+//   height: 100vh;
+// }
 
-.compare-container {
-  @include flexCenter;
-  flex-direction: row;
-  height: 100vh;
-  width: 100%;
-  iframe {
-    border: 1px solid lightgrey;
-  }
-}
+// .compare-container {
+//   @include flexCenter;
+//   flex-direction: row;
+//   height: 100vh;
+//   width: 100%;
+//   iframe {
+//     border: 1px solid lightgrey;
+//   }
+// }
 
-.clickable {
-  cursor: pointer;
-}
+// .clickable {
+//   cursor: pointer;
+// }
 
-.hidden {
-  display: none !important;
-}
+// .hidden {
+//   display: none !important;
+// }
 
-.compare {
-  width: 100%;
-  height: 100vh;
-}
+// .compare {
+//   width: 100%;
+//   height: 100vh;
+// }
 
-.search_input_container {
-  @include flexCenter;
-  button {
-    margin: 1rem;
-    padding: 0.25rem;
-  }
-  input {
-    padding: 0.25rem;
-  }
-}
+// .search_input_container {
+//   @include flexCenter;
+//   button {
+//     margin: 1rem;
+//     padding: 0.25rem;
+//   }
+//   input {
+//     padding: 0.25rem;
+//   }
+// }

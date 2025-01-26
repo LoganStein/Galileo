@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import "../CSS/Value.css";
+// import "../CSS/Value.css";
 import { TotalContext } from "../Components/TotalContext";
 import CircleChart from "./CircleChart";
 

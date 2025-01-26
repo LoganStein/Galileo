@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../CSS/Trade.css";
+// import "../CSS/Trade.css";
 import Transaction from "./Transaction";
 import GetOperations from "../Helpers/GetOperations";
 import Filter from "./Filter";

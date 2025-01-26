@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "../Components/Header";
-import "../CSS/Dashboard.css";
+// import "../CSS/Dashboard.css";
+// import "../CSS/main.css";
 import Value from "../Components/Value";
 import Chart from "../Components/Chart";
 import Asset_Values from "../Components/Asset_Values";
