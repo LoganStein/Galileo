@@ -19,6 +19,13 @@
   width: 93%;
 }
 
+.chart-control p {
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
 .asset-stats {
   display: flex;
   flex-direction: column;
