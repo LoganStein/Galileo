@@ -40,7 +40,9 @@ function Asset(props) {
           .startOf("day")
           .format("YYYY-MM-DD")}`,
         requestOptions
-      ).then((response) => response.json());
+      )
+        .then((response) => response.json())
+        .catch((error) => console.log("error", error));
 
       values = values.map(({ date, usd_price }) => ({
         date: moment(date),
