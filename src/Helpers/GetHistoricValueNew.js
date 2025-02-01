@@ -218,7 +218,7 @@ export async function GetHistoricValue(totalContext, days) {
         let ApiResp =
           asset.code == "XLM"
             ? await fetch(
-                `http://loganjstein.com:8080/${
+                `https://api.loganjstein.com/${
                   asset.code
                 }/native/${day.date.format("YYYY-MM-DD")}`,
                 requestOptions
@@ -228,7 +228,7 @@ export async function GetHistoricValue(totalContext, days) {
                   console.log("error", error);
                 })
             : await fetch(
-                `http://loganjstein.com:8080/${asset.code}/${
+                `https://api.loganjstein.com/${asset.code}/${
                   asset.issuer
                 }/${day.date.format("YYYY-MM-DD")}`,
                 requestOptions

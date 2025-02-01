@@ -27,9 +27,9 @@ async function getHistoricAssetValues(totalContext, days) {
   let urls = [];
   totalContext.totalState.assets.forEach((asset) => {
     if (asset.code === "XLM") {
-      urls.push(`http://loganjstein.com:8080/${asset.code}/native`);
+      urls.push(`https://api.loganjstein.com/${asset.code}/native`);
     } else {
-      urls.push(`http://loganjstein.com:8080/${asset.code}/${asset.issuer}`);
+      urls.push(`https://api.loganjstein.com/${asset.code}/${asset.issuer}`);
     }
   });
 

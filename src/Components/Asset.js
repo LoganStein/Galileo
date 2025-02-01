@@ -29,9 +29,8 @@ function Asset(props) {
         props.assetIssuer,
         1
       );
-
       let values = await fetch(
-        `http://loganjstein.com:8080/${props.assetCode}/${
+        `https://api.loganjstein.com/${props.assetCode}/${
           props.assetIssuer || "native"
         }/${moment()
           .subtract(TimeFrame, "days")
