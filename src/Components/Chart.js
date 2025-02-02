@@ -72,7 +72,7 @@ function Chart(props) {
     .tickFormat((d) => `$${d}`);
 
   return (
-    <div ref={parentRef} style={{ width: props.width, height: props.height }}>
+    <div id="testing" ref={parentRef} className={props.classname}>
       <svg width="100%" height={props.height}>
         <path fill="none" stroke="currentColor" d={line(data)} />
         <g fill="white" stroke="currentColor" strokeWidth="1.5">

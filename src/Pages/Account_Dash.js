@@ -149,13 +149,30 @@ function Account_Dash() {
             data={data}
             height={"50vh"}
             width={"44%"}
+            classname={"main-chart-container"}
           />
 
           {/* </div> */}
+          <div className="account-change-stats">
+            <span>
+              {getPercentChange(data) > 0 ? (
+                <span className="pos"> +{getPercentChange(data)}%</span>
+              ) : (
+                <span className="neg"> -{getPercentChange(data)}% </span>
+              )}
+              <span>in the last 7 days</span>
+            </span>
+            <span>
+              {getDollarChange(data) > 0 ? (
+                <span className="pos"> +${getDollarChange(data)}</span>
+              ) : (
+                <span className="neg"> -${getDollarChange(data)} </span>
+              )}
+              <span>in the last 7 days</span>
+            </span>
+          </div>
         </div>
         <div className="Assets">
-          <p>{getPercentChange(data)}% in the last 7 days</p>
-          <p>${getDollarChange(data)} in the last 7 days</p>
           <Asset_Values key={"4"} acct_data={stellarResp} />
         </div>
         <div className="Income">

@@ -103,33 +103,39 @@ function Asset(props) {
           height={"40vh"}
           width={"70%"}
         ></Chart>
+        <div className="chart-control">
+          <p
+            onClick={() => {
+              let tmp_time = TimeFrame;
+              setTimeFrame(tmp_time + 1);
+            }}
+          >
+            Increase
+          </p>
+          <p onClick={() => setTimeFrame(7)}>Reset</p>
+          <p
+            onClick={() => {
+              let tmp_time = TimeFrame;
+              setTimeFrame(tmp_time - 1);
+            }}
+          >
+            Decrease
+          </p>
+        </div>
         <div className="asset-stats">
-          <p>
-            Percent Change: {percentChange > 0 ? "+" : ""}
-            {percentChange}% in the last {TimeFrame} days
-          </p>
-          <p>
-            {percentChange > 0 ? "Increased" : "Decreased"} portfolio value by $
-            {valueChange.toLocaleString("en-US")} in the last {TimeFrame} days
-          </p>
-          <div className="chart-control">
-            <p
-              onClick={() => {
-                let tmp_time = TimeFrame;
-                setTimeFrame(tmp_time + 1);
-              }}
-            >
-              Increase
+          <div>
+            <p className={percentChange > 0 ? "pos" : "neg"}>
+              {percentChange > 0 ? "+" : ""}
+              {percentChange}%
             </p>
-            <p
-              onClick={() => {
-                let tmp_time = TimeFrame;
-                setTimeFrame(tmp_time - 1);
-              }}
-            >
-              Decrease
+            in the last {TimeFrame} days
+          </div>
+          <div>
+            <p className={valueChange > 0 ? "pos" : "neg"}>
+              {percentChange > 0 ? "Increased" : "Decreased"} portfolio value by
+              ${valueChange.toLocaleString("en-US")} in the last {TimeFrame}{" "}
+              days
             </p>
-            <p onClick={() => setTimeFrame(7)}>Reset</p>
           </div>
         </div>
       </div>

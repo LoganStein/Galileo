@@ -30,3 +30,29 @@
 //   gap: 1rem;
 //   width: 30%;
 // }
+
+@include media("<=phone") {
+  .assets-header {
+    @include flexSpaceEvenly;
+  }
+  .Asset {
+    @include flexSpaceEvenly;
+    padding: 1rem;
+    margin-bottom: 5px;
+    border: 1px solid grey;
+  }
+  .chart-control {
+    @include flexSpaceEvenly;
+  }
+  .asset-stats {
+    // @include dev;
+    @include flexCenter;
+    width: 100%;
+    .pos {
+      color: green;
+    }
+    .neg {
+      color: red;
+    }
+  }
+}

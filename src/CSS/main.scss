@@ -1,7 +1,10 @@
 @import "./variables";
 @import "include-media";
+// @import "C:\\Users\\ljste\\Documents\\Code\\Galileo\\node_modules\\include-media\\src\\_media.scss";
 
 @import "./Header.scss";
+@import "./Dashboard.scss";
+@import "./Value.scss";
 * {
   padding: 0;
   margin: 0;

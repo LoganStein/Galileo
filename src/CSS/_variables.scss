@@ -5,6 +5,20 @@ $light: rgb(183, 183, 183);
   justify-content: center;
 }
 
+@mixin flexSpaceEvenly {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+
 @mixin dev {
   border: 1px solid red;
 }
