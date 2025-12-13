@@ -10,6 +10,9 @@
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
+	"mounts": [
+		"source=${localEnv:HOME}/.ssh,target=/home/node/.ssh,readonly,type=bind"
+	],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "npm install"
