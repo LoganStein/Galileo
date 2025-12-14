@@ -210,35 +210,45 @@ export async function GetHistoricValue(totalContext, days) {
   let balHist = await GetBalanceHistory(totalContext, days + 1);
   let value_history = await Promise.all(
     balHist.map(async (day) => {
-      // get the value of the assets for the day
       let dayValue = 0;
       let currentDate;
       for (const asset of day.bals) {
-        let ApiResp =
-          asset.code == "XLM"
+        try {
+          let ApiResp =
+          asset.code === "XLM"
             ? await fetch(
                 `http://loganjstein.com:8080/${
                   asset.code
                 }/native/${day.date.format("YYYY-MM-DD")}`,
                 requestOptions
-              ).then((response) => response.json())
+              ).then((response) => response.json()).catch((e)=>{
+                console.log("Oops")
+              })
             : await fetch(
                 `http://loganjstein.com:8080/${asset.code}/${
                   asset.issuer
                 }/${day.date.format("YYYY-MM-DD")}`,
                 requestOptions
-              ).then((response) => response.json());
-        let assetPrice = ApiResp.length != 0 ? ApiResp[0][2] : 0;
-        currentDate = ApiResp.length != 0 ? ApiResp[0][1] : day.date;
-        dayValue += assetPrice * parseFloat(asset.bal);
+              ).then((response) => response.json()).catch((e) => {
+                console.log("Oops")
+              });
+              let assetPrice = ApiResp.length !== 0 ? ApiResp[0][2] : 0;
+              currentDate = ApiResp.length !== 0 ? ApiResp[0][1] : day.date;
+              dayValue += assetPrice * parseFloat(asset.bal);
+            } catch (e) {
+              console.log("oops")
+            }
       }
       // add the value to the historic value
       return { date: moment(currentDate), value: dayValue, bals: day.bals };
     })
   );
-  // this is setting the most recent day's value (current day) to set the time to start of day and the value to current value.
-  value_history[0].date = moment().startOf("day");
-  value_history[0].value = totalContext.totalState.total;
+  
+  // Only set the most recent day's value if all fetch requests were successful
+  if (value_history.length > 0 && value_history[0].value !== 0) {
+    value_history[0].date = moment().startOf("day");
+    value_history[0].value = totalContext.totalState.total;
+  }
 
   // console.log("historic value", value_history);
   // console.log("filled historc value", fill_missing_days(value_history));

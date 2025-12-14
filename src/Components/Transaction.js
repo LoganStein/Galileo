@@ -29,11 +29,11 @@ function Transaction(props) {
     const timeStamp = new Date(props.time).toLocaleTimeString("en", {
       timeStyle: "short",
       hour12: true,
-      timeZone: "CST",
+      timeZone: "America/Chicago",
     });
     const dateStamp = new Date(props.time).toLocaleDateString("en", {
       dateStyle: "short",
-      timeZone: "CST",
+      timeZone: "America/Chicago",
     });
     setDate(dateStamp);
     setTime(timeStamp, dateStamp);
