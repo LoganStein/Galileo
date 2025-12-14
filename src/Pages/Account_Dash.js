@@ -99,10 +99,19 @@ function Account_Dash() {
   useEffect(() => {
     console.log("Loading:", total);
     async function getValueHistory() {
-      GetHistoricValue({ totalState: total }, 5).then((histVal) => {
-        console.log("wtf", histVal);
-        setData(histVal);
-      });
+      try {
+        GetHistoricValue({ totalState: total })
+          .then((histVal) => {
+            console.log("wtf", histVal);
+            setData(histVal);
+          });
+      } catch (e) {
+        console.log("Failed to retrieve historic value", e.message);
+        // Display error message to the user (replace with actual UI update)
+        alert("History Unavailable");
+        // Optional: Prevent state update
+        // setData(null); // or some default value
+      }
     }
     total.acctID != "N/A" ? getValueHistory() : console.log("no acctID");
   }, [total.assets]);

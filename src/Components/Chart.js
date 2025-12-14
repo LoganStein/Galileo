@@ -50,41 +50,47 @@ function Chart(props) {
     .tickPadding(10)
     .tickFormat((d) => `$${d}`);
 
-  return (
-    <div ref={parentRef} style={{ width: props.width, height: props.height }}>
-      <svg width="100%" height={props.height}>
-        <path fill="none" stroke="currentColor" d={line(data)} />
-        <g fill="white" stroke="currentColor" strokeWidth="1.5">
-          {data.map((d, i) => (
-            <circle
-              key={i}
-              cx={x(d.date)}
-              cy={y(d.value)}
-              r={2.5}
-              onMouseOver={() => {
-                tooltipRef.current.style.visibility = "visible";
-              }}
-              onMouseMove={(e) => {
-                tooltipRef.current.style.top = e.pageY + "px";
-                tooltipRef.current.style.left = e.pageX + "px";
-                tooltipRef.current.textContent = d.value.toFixed(2);
-              }}
-              onMouseOut={() => {
-                tooltipRef.current.style.visibility = "hidden";
-              }}
-            />
-          ))}
-        </g>
-        <g transform={`translate(0, ${height - props.margin.bottom})`}>
-          <g className="axis" ref={(node) => d3.select(node).call(xAxis)} />
-        </g>
-        <g transform={`translate(${props.margin.left}, 0)`}>
-          <g className="axis" ref={(node) => d3.select(node).call(yAxis)} />
-        </g>
-      </svg>
-      <div ref={tooltipRef} style={tooltipStyle}></div>
-    </div>
-  );
+  if(data.length > 0){
+    return (
+      <div ref={parentRef} style={{ width: props.width, height: props.height}}>
+        <svg width="100%" height={props.height}>
+          <path fill="none" stroke="currentColor" d={line(data)} />
+          <g fill="white" stroke="currentColor" strokeWidth="1.5">
+            {data.map((d, i) => (
+              <circle
+                key={i}
+                cx={x(d.date)}
+                cy={y(d.value)}
+                r={2.5}
+                onMouseOver={() => {
+                  tooltipRef.current.style.visibility = "visible";
+                }}
+                onMouseMove={(e) => {
+                  tooltipRef.current.style.top = e.pageY + "px";
+                  tooltipRef.current.style.left = e.pageX + "px";
+                  tooltipRef.current.textContent = d.value.toFixed(2);
+                }}
+                onMouseOut={() => {
+                  tooltipRef.current.style.visibility = "hidden";
+                }}
+              />
+            ))}
+          </g>
+          <g transform={`translate(0, ${height - props.margin.bottom})`}>
+            <g className="axis" ref={(node) => d3.select(node).call(xAxis)} />
+          </g>
+          <g transform={`translate(${props.margin.left}, 0)`}>
+            <g className="axis" ref={(node) => d3.select(node).call(yAxis)} />
+          </g>
+        </svg>
+        <div ref={tooltipRef} style={tooltipStyle}></div>
+      </div>
+    );
+  }else{
+    return (<div style={{ width: props.width, height: props.height, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <h4>No historical data available</h4>
+    </div>)
+  }
 }
 
 export default Chart;
