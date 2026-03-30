@@ -50,6 +50,7 @@ function AccountDashboard() {
       });
     } else {
       setIsLoading(false);
+      console.log(transactionHistory);
     }
   }, [id, location.state]);
 
@@ -296,19 +297,27 @@ function AccountDashboard() {
                         className="flex justify-between items-center"
                       >
                         <div>
-                          <div className="font-medium">{tx.type}</div>
+                          <div className="font-medium">
+                            {tx.to === accountData.address
+                              ? "Recieved"
+                              : "Sent"}
+                          </div>
                           <div className="text-sm text-gray-500">
                             {tx.created}
                           </div>
                         </div>
-                        <div
-                          className={`font-medium ${
-                            tx.type === "Received"
-                              ? "text-green-600"
-                              : "text-red-600"
-                          }`}
-                        >
-                          {tx.amount}
+                        <div className={`font-medium`}>
+                          <span
+                            className={`${
+                              tx.to === accountData.address
+                                ? "text-green-600"
+                                : "text-red-600"
+                            }`}
+                          >
+                            {" "}
+                            {tx.amount}{" "}
+                          </span>{" "}
+                          <span> {tx.asset_code} </span>
                         </div>
                       </div>
                     ))}
