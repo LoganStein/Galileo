@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { tryCatch } from "../Helpers/try_catch";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import {
   FetchAccount,
   FetchFromUrl,
@@ -150,10 +153,43 @@ function AccountDashboard() {
               </p>
             </div>
             <button
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 hover:text-gray-600 flex items-center gap-1"
               onClick={() => {
-                if (accountData?.address)
-                  navigator.clipboard.writeText(accountData?.address);
+                if (accountData?.address) {
+                  if (navigator.clipboard == undefined) {
+                    console.log("Clipboard API not supported");
+                    toast.error("Failed to copy address", {
+                      position: "top-right",
+                      autoClose: 2000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                    });
+                  }
+                  navigator.clipboard
+                    .writeText(accountData.address)
+                    .then(() => {
+                      toast.success("Address copied!", {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                      });
+                    })
+                    .catch(() => {
+                      toast.error("Failed to copy address", {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                      });
+                    });
+                }
               }}
             >
               <svg
@@ -169,6 +205,7 @@ function AccountDashboard() {
                   d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
                 />
               </svg>
+              <span className="text-xs">Copy</span>
             </button>
           </div>
         </div>
@@ -438,6 +475,7 @@ function AccountDashboard() {
           </div>
         </div>
       </footer> */}
+      <ToastContainer />
     </div>
   );
 }
