@@ -50,16 +50,19 @@ function Home() {
               onSubmit={async (e) => {
                 e.preventDefault();
                 const { data: accountData, error } = await tryCatch(
-                  FetchAccount(account)
+                  FetchAccount(account),
                 );
                 const { data: payments, error: paymentError } = await tryCatch(
-                  FetchPayments(account)
+                  FetchPayments(account),
                 );
                 if (error || paymentError) {
                   console.error("Error fetching account:", error);
                 } else {
                   navigate(`/account?address=${encodeURIComponent(account)}`, {
-                    state: { account: mapAccountData(accountData), payments: mapPaymetsData(payments) },
+                    state: {
+                      account: mapAccountData(accountData),
+                      payments: mapPaymetsData(payments),
+                    },
                   });
                 }
               }}
@@ -192,8 +195,9 @@ function Home() {
           </div>
         </div>
       </section>
-
-      <Footer />
+      <div className="absolute bottom-0 min-w-full">
+        <Footer />
+      </div>
     </div>
   );
 }

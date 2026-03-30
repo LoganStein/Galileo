@@ -8,11 +8,11 @@ import type {
 export function getBalance(
   asset_code: string,
   issuer: string,
-  accountData: AccountData
+  accountData: AccountData,
 ) {
   // search through accountData.balances for the asset code and issuer
   const balance = accountData.balances.find(
-    (balance) => balance.asset_code === asset_code && balance.issuer === issuer
+    (balance) => balance.asset_code === asset_code && balance.issuer === issuer,
   );
   return balance;
 }
@@ -44,6 +44,7 @@ export function mapPaymetsData(data: StellarPayment): Payment[] {
   const newData = [] as Payment[];
   for (const payment of data._embedded.records) {
     const newPayment = {} as Payment;
+    newPayment.id = payment.transaction_hash;
     newPayment.amount = parseFloat(payment.amount);
     newPayment.asset_code = payment.asset_code || "";
     newPayment.issuer = payment.asset_issuer || "";
@@ -53,7 +54,7 @@ export function mapPaymetsData(data: StellarPayment): Payment[] {
     newPayment.successful = payment.transaction_successful;
     newPayment.asset_type = payment.asset_type;
     newPayment.next_page = data._links.next?.href; // I don't like this design. We shouldn't be putting this on each payment but for the page.
-    newPayment.prev_page = data._links.prev?.href.replace("order=asc", "order=desc") // we need to make sure we still have desc instead of asc
+    newPayment.prev_page = data._links.prev?.href;
     newData.push(newPayment);
   }
   return newData;

@@ -5,12 +5,17 @@ import { tryCatch } from "../Helpers/try_catch";
 import type { AccountData, Payment } from "../Types/stellar_account_types";
 
 interface TransactionProps {
-    transactionHistory: Payment[],
-    accountData: AccountData,
+  transactionHistory: Payment[];
+  accountData: AccountData;
 }
 
-function Transactions({transactionHistory, accountData}: TransactionProps) {
-    const [transactions, setTransactions] = useState<Payment[]>(transactionHistory)
+const PAGINATION = 25;
+
+function Transactions({ transactionHistory, accountData }: TransactionProps) {
+  const [transactions, setTransactions] =
+    useState<Payment[]>(transactionHistory);
+  const [start, setStart] = useState<number>(0);
+  const [end, setEnd] = useState<number>(PAGINATION);
   return (
     <div>
       <h3 className="text-lg font-semibold text-gray-900 mb-6">
@@ -53,9 +58,9 @@ function Transactions({transactionHistory, accountData}: TransactionProps) {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {transactions.map((tx) => (
+            {transactions.slice(start, end).map((tx) => (
               <tr key={tx.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespacetransactions[transactions.length - 1].prev_page-nowrap text-sm text-gray-500">
                   {tx.created}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -76,7 +81,10 @@ function Transactions({transactionHistory, accountData}: TransactionProps) {
                   {tx.asset_type !== "native" ? tx.asset_code : "XLM"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <a href="#" className="text-blue-600 hover:text-blue-900">
+                  <a
+                    href={`https://stellar.expert/explorer/public/tx/${tx.id}`}
+                    className="text-blue-600 hover:text-blue-900"
+                  >
                     View
                   </a>
                 </td>
@@ -89,14 +97,10 @@ function Transactions({transactionHistory, accountData}: TransactionProps) {
         <button
           className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
           onClick={() => {
-            // Handle previous page logic
-            tryCatch(
-              FetchFromUrl(transactions[0].prev_page ?? "").then(
-                (res) => {
-                  setTransactions(mapPaymetsData(res));
-                },
-              ),
-            );
+            if (start > 0) {
+              setStart(start - PAGINATION);
+              setEnd(end - PAGINATION);
+            }
           }}
         >
           Previous
@@ -105,13 +109,26 @@ function Transactions({transactionHistory, accountData}: TransactionProps) {
           className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
           onClick={() => {
             // Handle next page logic
-            tryCatch(
-              FetchFromUrl(transactions[0].next_page ?? "").then(
-                (res) => {
-                  setTransactions(mapPaymetsData(res));
-                },
-              ),
-            );
+            if (transactions.length <= end) {
+              tryCatch(
+                FetchFromUrl(transactions[end - 1].next_page ?? "").then(
+                  (res) => {
+                    const nextPayments: Payment[] = mapPaymetsData(res);
+                    setTransactions((prevTransactions) => [
+                      ...prevTransactions,
+                      ...nextPayments,
+                    ]);
+
+                    // shift the shown transactions
+                    setStart(start + PAGINATION);
+                    setEnd(end + PAGINATION);
+                  },
+                ),
+              );
+            } else {
+              setStart(start + PAGINATION);
+              setEnd(end + PAGINATION);
+            }
           }}
         >
           Next

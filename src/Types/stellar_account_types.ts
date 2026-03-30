@@ -133,7 +133,7 @@ export interface AccountData {
 }
 
 export interface Payment {
-  id: string;
+  id: string; // the transaction_hash
   asset_code: string;
   asset_type: string;
   issuer: string;
@@ -145,4 +145,5 @@ export interface Payment {
   successful: boolean;
   next_page?: string;
   prev_page?: string;
+  cursor?: string;
 }
