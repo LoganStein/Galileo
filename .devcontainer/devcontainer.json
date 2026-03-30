@@ -13,6 +13,13 @@
 	"mounts": [
 		// "source=${localEnv:HOME}/.ssh,target=/home/node/.ssh,readonly,type=bind"
 	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"esbenp.prettier-vscode"
+			]
+		}
+	},
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "yarn install"

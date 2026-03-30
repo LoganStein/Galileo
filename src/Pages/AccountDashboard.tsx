@@ -15,6 +15,9 @@ import {
   mapPaymetsData,
 } from "../Helpers/account_data";
 import type { AccountData, Payment } from "../Types/stellar_account_types";
+import Footer from "../Components/Footer";
+import Analytics from "../Components/Analytics";
+import Transactions from "../Components/Transactions";
 
 function AccountDashboard() {
   const navigate = useNavigate();
@@ -53,31 +56,6 @@ function AccountDashboard() {
       console.log(transactionHistory);
     }
   }, [id, location.state]);
-
-  // const transactionHistory = [
-  //   {
-  //     id: "tx1",
-  //     date: "2023-05-15",
-  //     amount: "10.5 XLM",
-  //     type: "Received",
-  //     status: "Completed",
-  //   },
-  //   {
-  //     id: "tx2",
-  //     date: "2023-05-14",
-  //     amount: "5.2 XLM",
-  //     type: "Sent",
-  //     status: "Completed",
-  //   },
-  //   {
-  //     id: "tx3",
-  //     date: "2023-05-13",
-  //     amount: "2.1 XLM",
-  //     type: "Received",
-  //     status: "Completed",
-  //   },
-  // ];
-  // const transactionHistory: Payment[] = location.state.payments
 
   const handleBackToSearch = () => {
     navigate("/");
@@ -327,163 +305,17 @@ function AccountDashboard() {
             )}
 
             {activeTab === "transactions" && (
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">
-                  Transaction History
-                </h3>
-                <div className="bg-white rounded-lg shadow overflow-hidden">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Date
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Type
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Amount
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Asset
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Details
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {transactionHistory.map((tx) => (
-                        <tr key={tx.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {tx.created}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span
-                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                tx.to === accountData.address
-                                  ? "bg-green-100 text-green-800"
-                                  : "bg-red-100 text-red-800"
-                              }`}
-                            >
-                              {tx.to === accountData.address
-                                ? "Received"
-                                : "Sent"}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {tx.amount}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {tx.asset_type !== "native" ? tx.asset_code : "XLM"}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a
-                              href="#"
-                              className="text-blue-600 hover:text-blue-900"
-                            >
-                              View
-                            </a>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <div className="mt-4 flex justify-between items-center">
-                  <button
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
-                    onClick={() => {
-                      // Handle previous page logic
-                      tryCatch(
-                        FetchFromUrl(
-                          transactionHistory[0].prev_page ?? "",
-                        ).then((res) => {
-                          setTransactionHistory(mapPaymetsData(res));
-                        }),
-                      );
-                    }}
-                  >
-                    Previous
-                  </button>
-                  <button
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
-                    onClick={() => {
-                      // Handle next page logic
-                      tryCatch(
-                        FetchFromUrl(
-                          transactionHistory[0].next_page ?? "",
-                        ).then((res) => {
-                          setTransactionHistory(mapPaymetsData(res));
-                        }),
-                      );
-                    }}
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
+              <Transactions transactionHistory={transactionHistory} accountData={accountData} />
             )}
 
             {activeTab === "analytics" && (
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">
-                  Account Analytics
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Placeholder for charts */}
-                  <div className="bg-gray-50 rounded-lg p-6 h-64 flex items-center justify-center">
-                    <p className="text-gray-500">Transaction Volume Chart</p>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-6 h-64 flex items-center justify-center">
-                    <p className="text-gray-500">Balance History Chart</p>
-                  </div>
-                </div>
-              </div>
+              <Analytics />
             )}
           </div>
         </div>
       </main>
 
-      {/* Footer */}
-      {/* <footer className="bg-gray-800 text-white mt-12">
-        <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
-            <div>
-              <h3 className="text-lg font-semibold">Galileo</h3>
-              <p className="text-gray-400 text-sm">
-                Your trusted Stellar address lookup tool
-              </p>
-            </div>
-            <div className="flex space-x-6">
-              <a href="#" className="text-gray-400 hover:text-white">
-                Privacy
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white">
-                Terms
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white">
-                API
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer> */}
+      <Footer />
       <ToastContainer />
     </div>
   );
