@@ -17,37 +17,38 @@ function AccountDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
   const location = useLocation();
-  // const [isLoading, setIsLoading] = useState(false);
   const [accountData, setAccountData] = useState<AccountData>(
-    location.state?.account ?? undefined
+    location.state?.account ?? undefined,
   );
   const [searchParams] = useSearchParams();
   const id = searchParams.get("address");
-  const [isLoading, setIsLoading] = useState(
-    !(location.state && location.state.account) && id
-  );
+  const [isLoading, setIsLoading] = useState(true);
   const [transactionHistory, setTransactionHistory] = useState<Payment[]>(
-    location.state?.account ?? undefined
+    location.state?.payments ?? [],
   );
 
   useEffect(() => {
-    if (!(location.state && location.state.account) && id) {
-      console.log(location.state)
-      tryCatch(FetchAccount(id)).then(({ data, error }) => {
-        if (data && !error) {
-          const mappedData: AccountData = mapAccountData(data);
+    if (!(location.state?.account && location.state.payments) && id) {
+      console.log("Direct from url");
+      setIsLoading(true);
+      Promise.all([
+        tryCatch(FetchAccount(id)),
+        tryCatch(FetchPayments(id)),
+      ]).then(([accountRes, paymentsRes]) => {
+        if (accountRes.data && !accountRes.error) {
+          const mappedData: AccountData = mapAccountData(accountRes.data);
           setAccountData(mappedData);
         }
-      });
-      tryCatch(FetchPayments(id)).then(({ data, error }) => {
-        if (data && !error) {
-          const mappedData: Payment[] = mapPaymetsData(data);
+        if (paymentsRes.data && !paymentsRes.error) {
+          const mappedData: Payment[] = mapPaymetsData(paymentsRes.data);
           setTransactionHistory(mappedData);
-          setIsLoading(false)
         }
+        setIsLoading(false);
       });
+    } else {
+      setIsLoading(false);
     }
-  }, [id, location.state, accountData]);
+  }, [id, location.state]);
 
   // const transactionHistory = [
   //   {
@@ -252,7 +253,7 @@ function AccountDashboard() {
                     Recent Activity
                   </h3>
                   <div className="space-y-4">
-                    {transactionHistory?.slice(0, 3).map((tx) => (
+                    {transactionHistory.slice(0, 3).map((tx) => (
                       <div
                         key={tx.id}
                         className="flex justify-between items-center"
@@ -365,10 +366,10 @@ function AccountDashboard() {
                       // Handle previous page logic
                       tryCatch(
                         FetchFromUrl(
-                          transactionHistory[0].prev_page ?? ""
+                          transactionHistory[0].prev_page ?? "",
                         ).then((res) => {
                           setTransactionHistory(mapPaymetsData(res));
-                        })
+                        }),
                       );
                     }}
                   >
@@ -380,10 +381,10 @@ function AccountDashboard() {
                       // Handle next page logic
                       tryCatch(
                         FetchFromUrl(
-                          transactionHistory[0].next_page ?? ""
+                          transactionHistory[0].next_page ?? "",
                         ).then((res) => {
                           setTransactionHistory(mapPaymetsData(res));
-                        })
+                        }),
                       );
                     }}
                   >
