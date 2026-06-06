@@ -1,9 +1,13 @@
+import type { AssetPrice } from "../Types/asset_types";
 import type {
   AccountData,
+  Balance,
   Payment,
   StellarAccount,
   StellarPayment,
 } from "../Types/stellar_account_types";
+import { FetchAssetPrices } from "./asset_data";
+import { tryCatch } from "./try_catch";
 
 export function getBalance(
   asset_code: string,
@@ -58,4 +62,38 @@ export function mapPaymetsData(data: StellarPayment): Payment[] {
     newData.push(newPayment);
   }
   return newData;
+}
+
+export async function getWalletValue(data: AccountData): Promise<number> {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().split("T")[0];
+
+  const pricePromises = data.balances.map(async (balance) => {
+    if (!balance.asset_code || !balance.issuer) return 0;
+
+    const fetchResult = await tryCatch<AssetPrice[]>(
+      FetchAssetPrices(
+        balance.asset_code,
+        balance.issuer,
+        yesterdayStr,
+        yesterdayStr,
+      ),
+    );
+
+    if (fetchResult.error) {
+      console.error(
+        `Failed to fetch price for ${balance.asset_code}:`,
+        fetchResult.error,
+      );
+      return 0;
+    }
+
+    return fetchResult.data.length > 0
+      ? Number(balance.balance) * fetchResult.data[0].usd_price
+      : 0;
+  });
+
+  const values = await Promise.all(pricePromises);
+  return values.reduce((sum, val) => sum + val, 0); // Sum the resolved values
 }

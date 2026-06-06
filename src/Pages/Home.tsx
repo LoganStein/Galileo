@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FetchAccount, FetchPayments } from "../Helpers/stellar_api_client";
 import { tryCatch } from "../Helpers/try_catch";
-import { mapAccountData, mapPaymetsData } from "../Helpers/account_data";
+import { getWalletValue, mapAccountData, mapPaymetsData } from "../Helpers/account_data";
 import Footer from "../Components/Footer";
 
 function Home() {
@@ -58,9 +58,12 @@ function Home() {
                 if (error || paymentError) {
                   console.error("Error fetching account:", error);
                 } else {
+                  let mappedAccountData = mapAccountData(accountData)
+                  let totalValue = await getWalletValue(mappedAccountData);
+                  mappedAccountData.total_wallet_value = Number(totalValue.toFixed(2));
                   navigate(`/account?address=${encodeURIComponent(account)}`, {
                     state: {
-                      account: mapAccountData(accountData),
+                      account: mappedAccountData,
                       payments: mapPaymetsData(payments),
                     },
                   });

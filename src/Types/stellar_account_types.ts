@@ -128,8 +128,7 @@ export interface AccountData {
   address: string;
   balances: Balance[];
   trustline_count: number;
-  total_transaction_count: number;
-  created: string;
+  total_wallet_value: number;
 }
 
 export interface Payment {

@@ -11,6 +11,7 @@ import {
 } from "../Helpers/stellar_api_client";
 import {
   getBalance,
+  getWalletValue,
   mapAccountData,
   mapPaymetsData,
 } from "../Helpers/account_data";
@@ -18,6 +19,8 @@ import type { AccountData, Payment } from "../Types/stellar_account_types";
 import Footer from "../Components/Footer";
 import Analytics from "../Components/Analytics";
 import Transactions from "../Components/Transactions";
+import AssetPriceHistoryGraph from "../Components/AssetPriceHistoryGraph";
+import Balances from "../Components/Balances";
 
 function AccountDashboard() {
   const navigate = useNavigate();
@@ -39,15 +42,21 @@ function AccountDashboard() {
       Promise.all([
         tryCatch(FetchAccount(id)),
         tryCatch(FetchPayments(id)),
-      ]).then(([accountRes, paymentsRes]) => {
+      ]).then(([accountRes, paymentsRes]) => { // I dont like this at all. the wallet value shouldn't be done this way.
         if (accountRes.data && !accountRes.error) {
-          const mappedData: AccountData = mapAccountData(accountRes.data);
+          let mappedData: AccountData = mapAccountData(accountRes.data);
+          Promise.all([getWalletValue(mappedData)]).then(([value]) => {
+            let data = mappedData;
+            data.total_wallet_value = Number(value.toFixed(2));
+            setAccountData(data);
+          });
           setAccountData(mappedData);
         }
         if (paymentsRes.data && !paymentsRes.error) {
           const mappedData: Payment[] = mapPaymetsData(paymentsRes.data);
           setTransactionHistory(mappedData);
         }
+
         setIsLoading(false);
       });
     } else {
@@ -228,81 +237,82 @@ function AccountDashboard() {
             {/* Tab Content */}
             <div className="p-6">
               {activeTab === "overview" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Account Summary Cards */}
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      Account Summary
-                    </h3>
-                    <div className="space-y-4">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">XLM Balance</span>
-                        <span className="font-semibold">
-                          {getBalance("XLM", "native", accountData)?.balance}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Trustlines</span>
-                        <span className="font-semibold">
-                          {accountData.trustline_count}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">
-                          Total Transactions
-                        </span>
-                        <span className="font-semibold">
-                          {accountData.total_transaction_count}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Created</span>
-                        <span className="font-semibold">
-                          {accountData.created}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Recent Activity */}
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      Recent Activity
-                    </h3>
-                    <div className="space-y-4">
-                      {transactionHistory.slice(0, 3).map((tx) => (
-                        <div
-                          key={tx.id}
-                          className="flex justify-between items-center"
-                        >
-                          <div>
-                            <div className="font-medium">
-                              {tx.to === accountData.address
-                                ? "Recieved"
-                                : "Sent"}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {tx.created}
-                            </div>
-                          </div>
-                          <div className={`font-medium`}>
-                            <span
-                              className={`${
-                                tx.to === accountData.address
-                                  ? "text-green-600"
-                                  : "text-red-600"
-                              }`}
-                            >
-                              {" "}
-                              {tx.amount}{" "}
-                            </span>{" "}
-                            <span> {tx.asset_code || "XLM"} </span>
-                          </div>
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Account Summary Cards */}
+                    <div className="bg-gray-50 rounded-lg p-6">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        Account Summary
+                      </h3>
+                      <div className="space-y-4">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">XLM Balance</span>
+                          <span className="font-semibold">
+                            {getBalance("XLM", "native", accountData)?.balance}
+                          </span>
                         </div>
-                      ))}
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Trustlines</span>
+                          <span className="font-semibold">
+                            {accountData.trustline_count}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">
+                            Total Wallet Value
+                          </span>
+                          <span className="font-semibold">
+                            ${accountData.total_wallet_value}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">???</span>
+                          <span className="font-semibold">{}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Recent Activity */}
+                    <div className="bg-gray-50 rounded-lg p-6">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                        Recent Activity
+                      </h3>
+                      <div className="space-y-4">
+                        {transactionHistory.slice(0, 3).map((tx) => (
+                          <div
+                            key={tx.id}
+                            className="flex justify-between items-center"
+                          >
+                            <div>
+                              <div className="font-medium">
+                                {tx.to === accountData.address
+                                  ? "Recieved"
+                                  : "Sent"}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                {tx.created}
+                              </div>
+                            </div>
+                            <div className={`font-medium`}>
+                              <span
+                                className={`${
+                                  tx.to === accountData.address
+                                    ? "text-green-600"
+                                    : "text-red-600"
+                                }`}
+                              >
+                                {" "}
+                                {tx.amount}{" "}
+                              </span>{" "}
+                              <span> {tx.asset_code || "XLM"} </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
+                  <Balances accountData={accountData} />
+                </>
               )}
 
               {activeTab === "transactions" && (
